@@ -1,7 +1,7 @@
 # Twitter-API-Account-Manager-Python3
-Python 3 script for managing of your twitter account using twitter official api's
+## Python 3 script for managing of your twitter account using twitter official api's
 
-Requirements
+### Requirements
 1. First of all you must create an application with your twitter account.
 Go to link below and create your application with personal data (you have to logged in to your account before it):
 
@@ -11,6 +11,8 @@ So you need four things for login with your account in this application. CONSUME
 
 Enter data in twitter_account_manager.ini file in config folder:
 
+```sh
+
 CONSUMERKEY = YOUR_CONSUMER_KEY
 
 CONSUMERSECRET = YOUR_CONSUMER_SECRET
@@ -18,15 +20,17 @@ CONSUMERSECRET = YOUR_CONSUMER_SECRET
 ACCESSKEY = YOUR_ACCESS_KEY
 
 ACCESSSECRET = YOUR_ACCESS_SECRET
+```
 
 2. After that you need install the requirements packages in requirements.txt:
 
-pip3 install tweepy
-pip3 install configparser
-
+```sh
+$pip3 install tweepy
+$pip3 install configparser
+```
 3. edit functions in main.py and run it!
 
-ToDo
+## ToDo
 
 . convert main.py to cli mode
 
