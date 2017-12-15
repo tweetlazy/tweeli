@@ -30,7 +30,7 @@ ToDo
 
 . convert main.py to cli mode
 
-. add follow, unfollow, fave methods in Account_Manager.py
+. add fave method in Account_Manager.py
 
 . add "get list of following not followd you" method in Account_Manager.py
 

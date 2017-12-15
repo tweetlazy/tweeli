@@ -2,3 +2,4 @@
 .venv/
 myconfig.txt
 src/config/
+*.pyc

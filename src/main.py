@@ -19,14 +19,17 @@ myAccount.login()
 # do some functions
 print(myAccount.getUserInfo('smm_taheri'))
 print(myAccount.getMyUserInfo())
-# res = myAccount.getFollowers('smm_taheri')
-# res = myAccount.getMyFollowers()
-# res = myAccount.getFollowings('smm_taheri')
+res = myAccount.getFollowers('smm_taheri')
+res = myAccount.getMyFollowers()
+res = myAccount.getFollowings('smm_taheri')
 res = myAccount.getMyFollowings()
 while True:
     try:
-        user = AccountManager.createUser(res.next())
+        user = AccountManager.showUser(res.next())
         print(user.items())
+        print(dir(res.next()))
         break
     except StopIteration:
         break
+# myAccount.follow('smm_taheri')
+myAccount.unfollow('smm_taheri')

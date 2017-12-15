@@ -36,88 +36,53 @@ class AccountManager:
                 }
         return User
 
+    def getUser(self, screenName):
+        return self.__api.get_user(screen_name=screenName)
+
+    def getMyUser(self):
+        return self.__api.me()
+
     def getUserInfo(self, screenName):
-        res = self.__api.get_user(screen_name=screenName)
-        User = {'Name':res.name,
-                'Screen Name':res.screen_name,
-                'Bio':res.description,
-                'ID':res.id,
-                'Protected':res.protected,
-                'Location':res.location,
-                'Creation Date':res.created_at,
-                'Verified':res.verified,
-                'Language':res.lang,
-                'Followers Count':res.followers_count,
-                'Followings Count':res.friends_count,
-                'Favourites Count':res.favourites_count,
-                'Tweets Count':res.statuses_count,
-                'Lists Count':res.listed_count
-                }
-        return User
+        userObj = self.getUser(screenName)
+        return AccountManager.showUser(userObj)
 
     def getMyUserInfo(self):
-        res = self.__api.me()
-        User = {'Name':res.name,
-                'Screen Name':res.screen_name,
-                'Bio':res.description,
-                'ID':res.id,
-                'Protected':res.protected,
-                'Location':res.location,
-                'Creation Date':res.created_at,
-                'Verified':res.verified,
-                'Language':res.lang,
-                'Followers Count':res.followers_count,
-                'Followings Count':res.friends_count,
-                'Favourites Count':res.favourites_count,
-                'Tweets Count':res.statuses_count,
-                'Lists Count':res.listed_count
-                }
-        return User
+        userObj = self.getMyUser()
+        return AccountManager.showUser(userObj)
 
     def getFollowers(self, screenName, count=None):
         if count is None:
             return tweepy.Cursor(self.__api.followers, screen_name=screenName).items()
         else:
-            return tweepy.Cursor(self.__api.followers, screen_name=screenName, count=count)  .items()          
+            return tweepy.Cursor(self.__api.followers, screen_name=screenName, count=count).items()      
 
     def getMyFollowers(self, count=None):
         myScreenName = self.getMyUserInfo()['Screen Name']
         if count is None:
             return tweepy.Cursor(self.__api.followers, screen_name=myScreenName).items()
         else:
-            return tweepy.Cursor(self.__api.followers, screen_name=myScreenName, count=count).items()            
+            return tweepy.Cursor(self.__api.followers, screen_name=myScreenName, count=count).items()       
 
     def getFollowings(self, screenName, count=None):
         if count is None:
             return tweepy.Cursor(self.__api.friends, screen_name=screenName).items()
         else:
-            return tweepy.Cursor(self.__api.friends, screen_name=screenName, count=count).items()            
+            return tweepy.Cursor(self.__api.friends, screen_name=screenName, count=count).items()          
 
     def getMyFollowings(self, count=None):
         myScreenName = self.getMyUserInfo()['Screen Name']
         if count is None:
             return tweepy.Cursor(self.__api.friends, screen_name=myScreenName).items()
         else:
-            return tweepy.Cursor(self.__api.friends, screen_name=myScreenName, count=count).items()            
+            return tweepy.Cursor(self.__api.friends, screen_name=myScreenName, count=count).items()
+
+    def follow(self, screenName):
+        userObj = self.getUser(screenName)
+        userObj.follow()
+
+    def unfollow(self, screenName):
+        userObj = self.getUser(screenName)
+        userObj.unfollow() 
 
 if __name__ == '__main__':
-    CONSUMERKEY = ''
-    CONSUMERSECRET = ''
-    ACCESSKEY = ''
-    ACCESSSECRET = ''
-
-    myAccount = AccountManager(CONSUMERKEY, CONSUMERSECRET, ACCESSKEY, ACCESSSECRET)
-    myAccount.login()
-    # print(myAccount.getUserInfo('smm_taheri'))
-    # print(myAccount.getMyUserInfo())
-    # res = myAccount.getFollowers('smm_taheri')
-    # res = myAccount.getMyFollowers()
-    # res = myAccount.getFollowings('smm_taheri')
-    res = myAccount.getMyFollowings()
-    while True:
-        try:
-            user = AccountManager.showUser(res.next())
-            print(user.items())
-            break
-        except StopIteration:
-            break
+    pass
