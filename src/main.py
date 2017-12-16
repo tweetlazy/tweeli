@@ -24,8 +24,6 @@ def DisplayOwnerAccountInfo():
   for key, value in data.items():
       print (key,value)
 
-# DisplayOwnerAccountInfo()
-
 # Function to Display Followers
 def DisplayMyFollowers():
     print ("They are Following You:")
@@ -33,8 +31,6 @@ def DisplayMyFollowers():
     for followers in myAccount.getMyFollowers():
       print(followers.screen_name)
     print ("========================")
-
-# DisplayMyFollowers()
 
 # Function to List the users that you Follow
 def DisplayFollowingMe():
@@ -44,7 +40,13 @@ def DisplayFollowingMe():
     print(following.screen_name)
   print ("========================")
 
-# DisplayFollowingMe()
+#Function To get other users Info
+def DisplayUserInfo(user_name):
+    print("Information of The User is:")
+    print("===========================")
+    info = myAccount.getUserInfo(user_name)
+    for key, value in info.items():
+        print (key, value)
 
 # To Follow and Unfollow we need to uncomment following:
 # myAccount.follow('smm_taheri')
@@ -54,6 +56,9 @@ def helpCommand():
   print("""Enter "myaccountinfo" to show the information of your account""")
   print("""Enter "myfollowers" to show your followers""")
   print("""Enter "myfollowings" to show your followings""")
+  print("""Enter "userinfo" to see the information of the user """)
+  print("""Enter "follow" to following new users""")
+  print("""Enter "unfollow" to unfollow someone """)
 
 def main():
   print("***Welcome to CLI mode***")
@@ -69,6 +74,24 @@ def main():
       DisplayMyFollowers()
     elif command == "myfollowings":
       DisplayFollowingMe()
+    elif command =="userinfo":
+      print(">>> Enter User Name: ", end="")
+      username = input()
+      DisplayUserInfo(username)
+    elif command =="follow":
+      print(">>>Enter User Name: ", end="")
+      username = input()
+      myAccount.follow(username)
+    elif command =="unfollow":
+      print(">>>Enter User Name: ", end="")
+      username = input()
+      print(">>>Are you sure you want to Unfollow " + username + " ? y/n")
+      answer = input()
+      if answer == "y":
+        myAccount.unfollow(username)
+      elif answer == "n":
+        print("Good Decision")
+
     print(">>> ", end='')
     command = input()
 

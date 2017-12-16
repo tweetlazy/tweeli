@@ -12,7 +12,7 @@ class AccountManager:
 
 # Twitter API has a limited rate : https://developer.twitter.com/en/docs/basics/rate-limiting
 # Added wait_on_rate_limit to true to automatically wait for rate limits tor eplenish
-# Added wait_on_rate_limit_notify to true since it to print a notification when Tweepy is waiting for rate limits to replenish
+# Added wait_on_rate_limit_notify to true since it will print a notification when Tweepy is waiting for rate limits to replenish
     def login(self, proxy=None):
         auth = tweepy.OAuthHandler(self.__consumerKey, self.__consumerSecret)
         auth.set_access_token(self.__accessKey, self.__accessSecret)
