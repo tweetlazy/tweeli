@@ -21,7 +21,7 @@ class AccountManager:
         else:
             self.__api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, proxy=proxy)
 
-    def showUser(userObj):
+    def showUser(self, userObj):
         User = {'Name':userObj.name,
                 'Screen Name':userObj.screen_name,
                 'Bio':userObj.description,
@@ -47,11 +47,11 @@ class AccountManager:
 
     def getUserInfo(self, screenName):
         userObj = self.getUser(screenName)
-        return AccountManager.showUser(userObj)
+        return self.showUser(userObj)
 
     def getMyUserInfo(self):
         userObj = self.getMyUser()
-        return AccountManager.showUser(userObj)
+        return self.showUser(userObj)
 
     def getFollowers(self, screenName, count=None):
         if count is None:
