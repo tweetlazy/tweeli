@@ -10,13 +10,16 @@ class AccountManager:
         self.__accessSecret = access_secret
         self.__api = None
 
+# Twitter API has a limited rate : https://developer.twitter.com/en/docs/basics/rate-limiting
+# Added wait_on_rate_limit to true to automatically wait for rate limits tor eplenish
+# Added wait_on_rate_limit_notify to true since it to print a notification when Tweepy is waiting for rate limits to replenish
     def login(self, proxy=None):
         auth = tweepy.OAuthHandler(self.__consumerKey, self.__consumerSecret)
         auth.set_access_token(self.__accessKey, self.__accessSecret)
         if proxy is None:
-            self.__api = tweepy.API(auth)
+            self.__api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
         else:
-            self.__api = tweepy.API(auth, proxy=proxy)
+            self.__api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, proxy=proxy)
 
     def showUser(userObj):
         User = {'Name':userObj.name,
@@ -54,20 +57,20 @@ class AccountManager:
         if count is None:
             return tweepy.Cursor(self.__api.followers, screen_name=screenName).items()
         else:
-            return tweepy.Cursor(self.__api.followers, screen_name=screenName, count=count).items()      
+            return tweepy.Cursor(self.__api.followers, screen_name=screenName, count=count).items()
 
     def getMyFollowers(self, count=None):
         myScreenName = self.getMyUserInfo()['Screen Name']
         if count is None:
             return tweepy.Cursor(self.__api.followers, screen_name=myScreenName).items()
         else:
-            return tweepy.Cursor(self.__api.followers, screen_name=myScreenName, count=count).items()       
+            return tweepy.Cursor(self.__api.followers, screen_name=myScreenName, count=count).items()
 
     def getFollowings(self, screenName, count=None):
         if count is None:
             return tweepy.Cursor(self.__api.friends, screen_name=screenName).items()
         else:
-            return tweepy.Cursor(self.__api.friends, screen_name=screenName, count=count).items()          
+            return tweepy.Cursor(self.__api.friends, screen_name=screenName, count=count).items()
 
     def getMyFollowings(self, count=None):
         myScreenName = self.getMyUserInfo()['Screen Name']
@@ -82,7 +85,7 @@ class AccountManager:
 
     def unfollow(self, screenName):
         userObj = self.getUser(screenName)
-        userObj.unfollow() 
+        userObj.unfollow()
 
 if __name__ == '__main__':
     pass

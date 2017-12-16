@@ -16,20 +16,36 @@ ACCESSSECRET = parser.get('api', 'ACCESSSECRET')
 myAccount = AccountManager(CONSUMERKEY, CONSUMERSECRET, ACCESSKEY, ACCESSSECRET)
 myAccount.login()
 
-# do some functions
-print(myAccount.getUserInfo('smm_taheri'))
-print(myAccount.getMyUserInfo())
-res = myAccount.getFollowers('smm_taheri')
-res = myAccount.getMyFollowers()
-res = myAccount.getFollowings('smm_taheri')
-res = myAccount.getMyFollowings()
-while True:
-    try:
-        user = AccountManager.showUser(res.next())
-        print(user.items())
-        print(dir(res.next()))
-        break
-    except StopIteration:
-        break
+#def main():
+# Define Command Line here in main
+
+# Function To display Owner's Details
+def DisplayOwnerAccountInfo ():
+    print ("Your Account Information :")
+    data = myAccount.getMyUserInfo()
+    for key, value in data.items():
+        print (key,value)
+
+DisplayOwnerAccountInfo()
+
+# Function to Display Followers
+def DisplayMyFollowers():
+    print ("They are Following You:")
+    print ("========================")
+    for followers in myAccount.getMyFollowers():
+      print(followers.screen_name)
+    print ("========================")
+DisplayMyFollowers()
+
+# Function to List the users that you Follow
+def DisplayFollowingMe():
+  print ("You are Following:")
+  print ("========================")
+  for following in myAccount.getMyFollowing():
+    print(following.screen_name)
+  print ("========================")
+DisplayFollowingMe()
+
+# To Follow and Unfollow we need to uncomment following:
 # myAccount.follow('smm_taheri')
-myAccount.unfollow('smm_taheri')
+#myAccount.unfollow('smm_taheri')
