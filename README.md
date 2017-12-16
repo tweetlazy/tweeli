@@ -3,7 +3,7 @@
 
 ### Requirements
 
-1. Create an Application with your Twitter account in [Twitter Account Manager](https://apps.twtter.com) to get API Access.
+1. Create an Application with your Twitter account in [Twitter Account Manager](https://apps.twitter.com) to get API Access.
 2. Rename "twitter_account_manager.ini_example" to "twitter_account_manager.ini"
 3. Enter API keys in twitter_account_manager.ini file in config folder:
 
