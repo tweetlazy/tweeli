@@ -1,15 +1,11 @@
 # Twitter-API-Account-Manager-Python3
-## Python 3 script for managing of your twitter account using twitter official api's
+## Python 3 script for managing your twitter account using twitter official api's
 
 ### Requirements
-1. First of all you must create an application with your twitter account.
-Go to link below and create your application with personal data (you have to logged in to your account before it):
 
-https://apps.twitter.com/
-
-So you need four things for login with your account in this application. CONSUMERKEY, CONSUMERSECRET, ACCESSKEY, ACCESSSECRET
-
-Enter data in twitter_account_manager.ini file in config folder:
+1. Create an Application with your Twitter account in [Twitter Account Manager](https://apps.twtter.com) to get API Access.
+2. Rename "twitter_account_manager.ini_example" to "twitter_account_manager.ini"
+3. Enter API keys in twitter_account_manager.ini file in config folder:
 
 ```sh
 
@@ -22,20 +18,22 @@ ACCESSKEY = YOUR_ACCESS_KEY
 ACCESSSECRET = YOUR_ACCESS_SECRET
 ```
 
-2. After that you need install the requirements packages in requirements.txt:
+4. Install the required packages in requirements.txt:
 
 ```sh
 $pip3 install tweepy
 $pip3 install configparser
 ```
-3. edit functions in main.py and run it!
+5. Edit and Add functions in main.py and run it!
 
-## ToDo
+## Contribution
 
-. convert main.py to cli mode
+If you want to contribute, feel free to raise a PR for following
 
-. add fave method in Account_Manager.py
+* Convert *main.py* to *cli* mode
 
-. add "get list of following not followd you" method in Account_Manager.py
+* add fave method in *Account_Manager.py*
 
-. add "unfollow notification" method in Account_Manager.py
+* add "get list of following not followd you" method in *Account_Manager.py*
+
+* add "unfollow notification" method in *Account_Manager.py*
