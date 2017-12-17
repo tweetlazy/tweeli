@@ -10,15 +10,18 @@ class AccountManager:
         self.__accessSecret = access_secret
         self.__api = None
 
+# Twitter API has a limited rate : https://developer.twitter.com/en/docs/basics/rate-limiting
+# Added wait_on_rate_limit to true to automatically wait for rate limits tor eplenish
+# Added wait_on_rate_limit_notify to true since it will print a notification when Tweepy is waiting for rate limits to replenish
     def login(self, proxy=None):
         auth = tweepy.OAuthHandler(self.__consumerKey, self.__consumerSecret)
         auth.set_access_token(self.__accessKey, self.__accessSecret)
         if proxy is None:
-            self.__api = tweepy.API(auth)
+            self.__api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
         else:
-            self.__api = tweepy.API(auth, proxy=proxy)
+            self.__api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, proxy=proxy)
 
-    def showUser(userObj):
+    def showUser(self, userObj):
         User = {'Name':userObj.name,
                 'Screen Name':userObj.screen_name,
                 'Bio':userObj.description,
@@ -44,11 +47,11 @@ class AccountManager:
 
     def getUserInfo(self, screenName):
         userObj = self.getUser(screenName)
-        return AccountManager.showUser(userObj)
+        return self.showUser(userObj)
 
     def getMyUserInfo(self):
         userObj = self.getMyUser()
-        return AccountManager.showUser(userObj)
+        return self.showUser(userObj)
 
     def getFollowers(self, screenName, count=None):
         if count is None:
@@ -84,6 +87,12 @@ class AccountManager:
         userObj = self.getUser(screenName)
         userObj.unfollow()
 
+    def getHomeTimeline(self, count=None):
+        if count is None:
+            return tweepy.Cursor(self.__api.home_timeline).items()
+        else:
+            return tweepy.Cursor(self.__api.home_timeline, count=count).items()
+
     def getTimeline(self, screenName, count=None):
         if count is None:
             return tweepy.Cursor(self.__api.user_timeline, screen_name = screenName).items()
@@ -103,6 +112,8 @@ class AccountManager:
     def fave(self, tweetId):
         self.__api.create_favorite(tweetId)
 
+    def unfave(self, tweetId):
+        self.__api.destroy_favorite(tweetId)
 
     def faveAll(self, screenName):
         tweets = self.getTimeline(screenName);
@@ -112,18 +123,6 @@ class AccountManager:
                     self.fave(tweet.id)
                 except Exception as e:
                     print(e)
-
-    def unfave(self, tweetId):
-        self.__api.destroy_favorite(tweetId)
-
-
-    def unfaveAll(self, screenName):
-        tweets = self.getTimeline(screenName);
-        for tweet in tweets:
-            try:
-                self.unfave(tweet.id)
-            except Exception as e:
-                print(e)
 
     def retweet(self, tweetId):
         self.__api.retweet(tweetId)
@@ -147,7 +146,6 @@ class AccountManager:
         myFollowers = self.getMyFollowings();
         nBack = [f.screen_name for f in myFollowers if not f.following]
         return nBack
-
 
 if __name__ == '__main__':
     pass
