@@ -138,7 +138,7 @@ class AccountManager:
                     print(e)
 
     def noBackFollowingsRaw(self):
-        myFollowers = self.getMyFollowers();
+        myFollowers = self.getMyFollowings();
         nBack = [f for f in myFollowers if not f.following]
         return nBack
 
