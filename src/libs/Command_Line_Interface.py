@@ -8,7 +8,7 @@ class TwitterCLI(cmd.Cmd):
 
     def preloop(self):
         cmd.Cmd.preloop(self)
-    
+
     def init(self, twitterCore):
         self.twitterCore = twitterCore
 
@@ -33,14 +33,46 @@ class TwitterCLI(cmd.Cmd):
         userName = line
         self.twitterCore.UnFollow(userName)
 
+    def do_fave(self, line):
+        tweetId = line
+        self.twitterCore.Fave(tweetId)
+
+    def do_unfave(self, line):
+        tweetId = line
+        self.twitterCore.UnFave(tweetId)
+
+    def do_retweet(self, line):
+        tweetId = line
+        self.twitterCore.Retweet(tweetId)
+
+    def do_home(self, line):
+        self.twitterCore.DisplayHomeTimeline()
+
+    def do_mytimeline(self, line):
+        self.twitterCore.DisplayMyTimeline()
+
+    def do_timeline(self, line):
+        userName = line
+        self.twitterCore.DisplayUserTimeline(userName)
+
+    def do_followingsnotfollowing(self, line):
+        self.twitterCore.FollowingsNotFollowing()
+
     def do_help(self, line):
         print("These shell commands are defined internally!\n\n")
-        print("myaccountinfo          show the information of your account")
-        print("myfollowers            show your followers")
-        print("myfollowings           show your followings")
-        print("userinfo               show the information of the user ")
-        print("follow                 following new users")
-        print("unfollow               unfollow someone ")
+        print("myaccountinfo           show the information of your account")
+        print("myfollowers             show your followers")
+        print("myfollowings            show your followings")
+        print("userinfo                show the information of the user ")
+        print("follow                  following new users")
+        print("unfollow                unfollow someone ")
+        print("followingsnotfollowing  to see who doesnt follow you back ")
+        print("timeline                user`s timeline ")
+        print("mytimeline              your timeline ")
+        print("home                    home timeline ")
+        print("fave                    fave a tweet ")
+        print("unfave                  unfave a tweet ")
+        print("retweet                 retweet a tweet ")
 
     def do_exit(self, line):
         sys.exit()

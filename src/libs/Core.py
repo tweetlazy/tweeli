@@ -22,7 +22,7 @@ class TwitterCore:
         accessSecret = parser.get('api', 'ACCESSSECRET')
 
         self.ConnectToAccount(consumerKey, secretKey, accessKey, accessSecret)
-        
+
     # Create AccountManager object and login to your account
     def ConnectToAccount(self, consumerKey, secretKey, accessKey, accessSecret):
         self.account = TwitterAccountManager(consumerKey, secretKey, accessKey, accessSecret)
@@ -63,9 +63,59 @@ class TwitterCore:
     def Follow(self, userName):
         self.account.follow(userName)
 
-    # Unfollow specefic user  
+    # Unfollow specefic user
     def UnFollow(self, userName):
-        self.account.follow(userName)
+        self.account.unfollow(userName)
 
+    # get names of followings not following back
+    def FollowingsNotFollowing():
+        names = myAccount.noBackFollowings()
+        for name in names:
+            print (name)
+
+    #get home timeline
+    def DisplayHomeTimeline():
+        tweets = myAccount.getHomeTimeline()
+        for tweet in tweets:
+            print("id : "+ str(tweet.id))
+            print (tweet.user.screen_name + " tweeted :")
+            print(tweet.text)
+            print("===========================")
+
+    #get Timeline
+    def DisplayMyTimeline():
+        tweets = myAccount.getMyTimeline()
+        for tweet in tweets:
+            print("id : "+ str(tweet.id))
+            print (tweet.user.screen_name + " tweeted :")
+            print(tweet.text)
+            print("===========================")
+
+    #get Timeline
+    def DisplayUserTimeline(screenName):
+        tweets = myAccount.getTimeline(screenName)
+        for tweet in tweets:
+            print("id : "+ str(tweet.id))
+            print (tweet.user.screen_name + " tweeted :")
+            print(tweet.text)
+            print("===========================")
+
+    def Retweet(tweetId):
+        try:
+          myAccount.retweet(tweetId)
+        except Exception as e:
+          print(e)
+
+    def Fave(tweetId):
+        try:
+          myAccount.fave(tweetId)
+        except Exception as e:
+          print(e)
+
+    def UnFave(tweetId):
+        try:
+          myAccount.unfave(tweetId)
+        except Exception as e:
+          print(e)
 if __name__ == '__main__':
     pass
