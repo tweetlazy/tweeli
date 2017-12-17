@@ -1,7 +1,7 @@
 
 import tweepy
 
-class AccountManager:
+class TwitterAccountManager:
 
     def __init__(self, consumer_key, consumer_secret, access_key, access_secret):
         self.__consumerKey = consumer_key
