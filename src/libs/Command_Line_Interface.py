@@ -1,14 +1,13 @@
 
 import cmd
 import sys
-# import readline
-# import os
+
 
 class TwitterCLI(cmd.Cmd):
 
     def preloop(self):
         cmd.Cmd.preloop(self)
-    
+
     def init(self, twitterCore):
         self.twitterCore = twitterCore
 
