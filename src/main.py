@@ -33,5 +33,5 @@ myAccount.login()
 #         break
 # myAccount.follow('TheBl4ckStar')
 # myAccount.unfollow('TheBl4ckStar')
-# myAccount.faveAll('TheBl4ckStar')
+# myAccount.unfaveAll('TheBl4ckStar')
 print(myAccount.noBackFollowings())

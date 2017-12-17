@@ -113,6 +113,18 @@ class AccountManager:
                 except Exception as e:
                     print(e)
 
+    def unfave(self, tweetId):
+        self.__api.destroy_favorite(tweetId)
+
+
+    def unfaveAll(self, screenName):
+        tweets = self.getTimeline(screenName);
+        for tweet in tweets:
+            try:
+                self.unfave(tweet.id)
+            except Exception as e:
+                print(e)
+
     def retweet(self, tweetId):
         self.__api.retweet(tweetId)
 
