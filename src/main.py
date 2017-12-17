@@ -145,23 +145,23 @@ def main():
       print(">>>Enter Tweet Id: ", end="")
       tweetId = input()
       try:
-          myAccount.fave(tweetId)
+        myAccount.fave(tweetId)
       except Exception as e:
-          print(e)
+        print(e)
     elif command == "unfave":
       print(">>>Enter Tweet Id: ", end="")
       tweetId = input()
       try:
-           myAccount.unfave(tweetId)
+        myAccount.unfave(tweetId)
       except Exception as e:
-           print(e)
+        print(e)
     elif command =="retweet":
       print(">>>Enter Tweet Id: ", end="")
       tweetId = input()
       try:
-          myAccount.retweet(tweetId)
+        myAccount.retweet(tweetId)
       except Exception as e:
-          print(e)
+        print(e)
     print(">>> ", end='')
     command = input()
 
