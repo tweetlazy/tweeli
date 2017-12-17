@@ -1,10 +1,18 @@
 
 from configparser import ConfigParser
+from os import path
+from sys import exit
 from libs.Account_Manager import AccountManager
 
 # Read config file
+conf_path = "config/twitter_account_manager.ini"
 parser = ConfigParser()
-parser.read("config/twitter_account_manager.ini")
+
+if not path.exists(conf_path):
+  print("[X] Config file does not exist or is invalid.")
+  exit(1)
+
+parser.read(conf_path)
 
 # Set application parameters
 CONSUMERKEY = parser.get('api', 'CONSUMERKEY')
