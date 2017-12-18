@@ -1,5 +1,4 @@
 
-
 import readline
 from os import path
 
@@ -22,4 +21,3 @@ def main():
     readline.write_history_file('./.CLI_history')
 
 main()
-
