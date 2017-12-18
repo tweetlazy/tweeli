@@ -87,5 +87,62 @@ class TwitterAccountManager:
         userObj = self.getUser(screenName)
         userObj.unfollow()
 
+    def getHomeTimeline(self, count=None):
+        if count is None:
+            return tweepy.Cursor(self.__api.home_timeline).items()
+        else:
+            return tweepy.Cursor(self.__api.home_timeline, count=count).items()
+
+    def getTimeline(self, screenName, count=None):
+        if count is None:
+            return tweepy.Cursor(self.__api.user_timeline, screen_name = screenName).items()
+        else:
+            return tweepy.Cursor(self.__api.user_timeline, screen_name = screenName, count=count).items()
+
+    def getMyTimeline(self, count=None):
+        myScreenName = self.getMyUserInfo()['Screen Name']
+        if count is None:
+            return tweepy.Cursor(self.__api.user_timeline, screen_name = myScreenName).items()
+        else:
+            return tweepy.Cursor(self.__api.user_timeline, screen_name = myScreenName, count=count).items()
+
+    def isMention(self, tweet):
+        return tweet.in_reply_to_status_id is not None
+
+    def fave(self, tweetId):
+        self.__api.create_favorite(tweetId)
+
+    def unfave(self, tweetId):
+        self.__api.destroy_favorite(tweetId)
+
+    def faveAll(self, screenName):
+        tweets = self.getTimeline(screenName)
+        for tweet in tweets:
+            if not self.isMention(tweet):
+                try:
+                    self.fave(tweet.id)
+                except Exception as e:
+                    print(e)
+
+    def retweet(self, tweetId):
+        self.__api.retweet(tweetId)
+
+
+    def retweetAll(self, screenName):
+        tweets = self.getTimeline(screenName)
+        for tweet in tweets:
+            if not self.isMention(tweet):
+                try:
+                    self.retweet(tweet.id)
+                except Exception as e:
+                    print(e)
+
+    def noBackFollowings(self):
+        userObj = self.getMyUser()
+        myFollowings = [f.screen_name for f in self.getMyFollowings()]
+        myFollowers = [f.screen_name for f in self.getMyFollowers()]
+        nBack = [user for user in myFollowings if not user in myFollowers]
+        return nBack
+
 if __name__ == '__main__':
     pass
