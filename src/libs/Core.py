@@ -1,7 +1,14 @@
 
 from configparser import ConfigParser
 from os import path
-from .Account_Manager import TwitterAccountManager
+# Sometimes Python triggers following:
+# ModuleNotFoundError: No module named 'Account_Manager'
+# To avoid this error during runtime, I've handled it to check Directory Structure
+# https://stackoverflow.com/questions/43728431/modulenotfounderror-no-module-named-x
+try:
+    from Account_Manager import TwitterAccountManager
+except ImportError:
+    from .Account_Manager import TwitterAccountManager
 
 class TwitterCore:
 

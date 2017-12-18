@@ -1,7 +1,5 @@
 import cmd
 import sys
-# import readline
-# import os
 
 class TwitterCLI(cmd.Cmd):
 
