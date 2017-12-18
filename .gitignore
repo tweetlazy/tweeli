@@ -5,3 +5,4 @@ src/config/twitter_account_manager.ini
 *.pyc
 *.swp
 src/libs/__pycache__/
+src/libs/.CLI_history

@@ -28,12 +28,13 @@ $pip3 install configparser
 
 ## Contribution
 
-If you want to contribute, feel free to raise a PR for following
+Bug reports and pull requests are welcome on GitHub at https://github.com/smmtaheri/Twitter-API-Account-Manager-Python .
 
-* Convert *main.py* to *cli* mode
+Please fork it and raise a pull request for your contribution.
 
-* add fave method in *Account_Manager.py*
+## Next Steps:
 
-* add "get list of following not followd you" method in *Account_Manager.py*
-
-* add "unfollow notification" method in *Account_Manager.py*
+1. Improve *cli* and adopt existing *cli* modules
+2. Add fave method in *Account_manager.py*
+3. Add "get list of following not followd you" method in *Account_Manager.py*
+4. Implement file system caching
