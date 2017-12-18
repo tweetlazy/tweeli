@@ -1,7 +1,6 @@
 
 from configparser import ConfigParser
 from os import path
-
 # Sometimes Python triggers following:
 # ModuleNotFoundError: No module named 'Account_Manager'
 # To avoid this error during runtime, I've handled it to check Directory Structure
@@ -73,7 +72,57 @@ class TwitterCore:
 
     # Unfollow specefic user
     def UnFollow(self, userName):
-        self.account.follow(userName)
+        self.account.unfollow(userName)
 
+    # get names of followings not following back
+    def FollowingsNotFollowing(self):
+        names = self.account.noBackFollowings()
+        for name in names:
+            print (name)
+
+    #get home timeline
+    def DisplayHomeTimeline(self):
+        tweets = self.account.getHomeTimeline()
+        for tweet in tweets:
+            print("id : "+ str(tweet.id))
+            print (tweet.user.screen_name + " tweeted :")
+            print(tweet.text)
+            print("===========================")
+
+    #get Timeline
+    def DisplayMyTimeline(self):
+        tweets = self.account.getMyTimeline()
+        for tweet in tweets:
+            print("id : "+ str(tweet.id))
+            print (tweet.user.screen_name + " tweeted :")
+            print(tweet.text)
+            print("===========================")
+
+    #get Timeline
+    def DisplayUserTimeline(self,screenName):
+        tweets = self.account.getTimeline(screenName)
+        for tweet in tweets:
+            print("id : "+ str(tweet.id))
+            print (tweet.user.screen_name + " tweeted :")
+            print(tweet.text)
+            print("===========================")
+
+    def Retweet(self,tweetId):
+        try:
+          self.account.retweet(tweetId)
+        except Exception as e:
+          print(e)
+
+    def Fave(self,tweetId):
+        try:
+          self.account.fave(tweetId)
+        except Exception as e:
+          print(e)
+
+    def UnFave(self,tweetId):
+        try:
+          self.account.unfave(tweetId)
+        except Exception as e:
+          print(e)
 if __name__ == '__main__':
     pass
