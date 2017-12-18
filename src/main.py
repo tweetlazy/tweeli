@@ -63,7 +63,7 @@ def DisplayHomeTimeline():
         print(tweet.text)
         print("===========================")
 
-#Function to get user's get Timeline
+#Function to get Timeline
 def DisplayMyTimeline():
     tweets = myAccount.getMyTimeline()
     for tweet in tweets:
@@ -144,24 +144,15 @@ def main():
     elif command == "fave":
       print(">>>Enter Tweet Id: ", end="")
       tweetId = input()
-      try:
-        myAccount.fave(tweetId)
-      except Exception as e:
-        print(e)
+      Fave(tweetId)
     elif command == "unfave":
       print(">>>Enter Tweet Id: ", end="")
       tweetId = input()
-      try:
-        myAccount.unfave(tweetId)
-      except Exception as e:
-        print(e)
+      UnFave(tweetId)
     elif command =="retweet":
       print(">>>Enter Tweet Id: ", end="")
       tweetId = input()
-      try:
-        myAccount.retweet(tweetId)
-      except Exception as e:
-        print(e)
+      Retweet(tweetId)
     print(">>> ", end='')
     command = input()
 
