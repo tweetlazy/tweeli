@@ -4,7 +4,7 @@
 ### Requirements
 
 1. Create an Application with your Twitter account in [Twitter Account Manager](https://apps.twitter.com) to get API Access.
-2. Rename "twitter_account_manager.ini_example" to "twitter_account_manager.ini"
+2. Duplicate "twitter_account_manager.ini_example" in config file and rename new file to "twitter_account_manager.ini"
 3. Enter API keys in twitter_account_manager.ini file in config folder:
 
 ```sh
@@ -24,7 +24,7 @@ ACCESSSECRET = YOUR_ACCESS_SECRET
 $pip3 install tweepy
 $pip3 install configparser
 ```
-5. Edit and Add functions in main.py and run it!
+5. Run main and press 'tab' to show available commands. Then run your ideal command and enjoy it!
 
 ## Contribution
 
@@ -34,7 +34,6 @@ Please fork it and raise a pull request for your contribution.
 
 ## Next Steps:
 
-1. Improve *cli* and adopt existing *cli* modules
-2. Add fave method in *Account_manager.py*
-3. Add "get list of following not followd you" method in *Account_Manager.py*
-4. Implement file system caching
+1. Complete twitter functions (list, direct, trends and ...)
+2. Implement file system caching (handle twitter api limites and )
+3. Add unfollow track
