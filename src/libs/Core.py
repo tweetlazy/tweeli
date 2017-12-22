@@ -5,7 +5,7 @@ from os import path
 import os
 from sys import exit
 
-CONFIG_PATH = 'config/twitter_account_manager.ini'
+CONFIG_PATH = '../config/twitter_account_manager.ini'
 
 class TwitterCore:
 
