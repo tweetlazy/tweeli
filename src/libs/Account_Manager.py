@@ -21,7 +21,7 @@ class TwitterAccountManager:
         else:
             self.__api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, proxy=proxy)
 
-    def showUser(self, userObj):
+    def __showUserObj(self, userObj):
         User = {'Name':userObj.name,
                 'Screen Name':userObj.screen_name,
                 'Bio':userObj.description,
@@ -39,17 +39,17 @@ class TwitterAccountManager:
                 }
         return User
 
+    def showUser(self, userName):
+        userObj = self.getUser(userName)
+        return self.showUser(userObj)
+
     def getUser(self, screenName):
         return self.__api.get_user(screen_name=screenName)
 
     def getMyUser(self):
         return self.__api.me()
 
-    def getUserInfo(self, screenName):
-        userObj = self.getUser(screenName)
-        return self.showUser(userObj)
-
-    def getMyUserInfo(self):
+    def showMyUser(self):
         userObj = self.getMyUser()
         return self.showUser(userObj)
 
@@ -100,7 +100,7 @@ class TwitterAccountManager:
             return tweepy.Cursor(self.__api.user_timeline, screen_name = screenName, count=count).items()
 
     def getMyTimeline(self, count=None):
-        myScreenName = self.getMyUserInfo()['Screen Name']
+        myScreenName = self.getMyUserInfo()['Username']
         if count is None:
             return tweepy.Cursor(self.__api.user_timeline, screen_name = myScreenName).items()
         else:
