@@ -70,7 +70,7 @@ class TwitterCLI(Cmd):
             if len(commands) == 2:
                 completions = [f for f in self.SHOW_USERS if f.startswith(text)]
             elif len(commands) == 3 and 'me' in line:
-                completions = self.SHOW_COMMANDS[:]
+                completions = [f for f in self.SHOW_COMMANDS if f.startswith(text)]
             elif len(commands) == 4:
                 completions = [f for f in self.SHOW_COMMANDS if f.startswith(text)]
         return completions
