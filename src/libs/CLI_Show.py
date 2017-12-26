@@ -125,7 +125,7 @@ class TwitterCLIShow:
     def displayOwnerNoBack(self, count=None):
         "Show owner users not follow back you"
         users = self.__account.getMyNoBack() if count is None else self.__account.getMyNoBack(count)
-        print("\nYour NoBacks:")
+        print("\nThey Did Not Followed Back You:")
         print("==============================")
         for user in users:
             try:
@@ -136,8 +136,8 @@ class TwitterCLIShow:
 
     def displayNoBack(self, userName, count=None):
         "Show users not follow back user"
-        users = self.__account.getNoBack() if count is None else self.__account.getNoBack(userName, count)
-        print("\nUser %s NoBacks:"%userName)
+        users = self.__account.getNoBack(userName) if count is None else self.__account.getNoBack(userName, count)
+        print("\nThey Did Not Followed Back User %s:"%userName)
         print("==============================")
         for user in users:
             try:
@@ -149,7 +149,7 @@ class TwitterCLIShow:
     def displayOwnerNotBacked(self, count=None):
         "Show owner users not followed back by you"
         users = self.__account.getMyNotBacked() if count is None else self.__account.getMyNotBacked(count)
-        print("\nYou Are Not Backed:")
+        print("\nYou Did Not Followed Back:")
         print("==============================")
         for user in users:
             try:
@@ -161,7 +161,7 @@ class TwitterCLIShow:
     def displayNotBacked(self, userName, count=None):
         "Show users not followed back by user"
         users = self.__account.getNotBacked() if count is None else self.__account.getNotBacked(userName, count)
-        print("\nUser %s Are Not Backed:"%userName)
+        print("\nUser %s Did Not Followed Back:"%userName)
         print("==============================")
         for user in users:
             try:

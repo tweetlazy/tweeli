@@ -32,7 +32,7 @@ class TwitterCore:
 
         # Check config file is exist or not
         if not path.exists(CONFIG_PATH):
-            print('[X] Config file does not exist or is invalid.|%s|%s'%(CONFIG_PATH, os.getcwd()))
+            print('[X] Config file does not exist or is invalid.')
             exit(1)
 
         # Read config file
@@ -142,8 +142,8 @@ class TwitterCore:
 
     def friendShip(self, userName1, userName2):
         'Return status of userName1 and userName2->[is_userName1_follow_userName2, is_userName2_follow_userName1]'
-        result = self.__account.show_friendship(userName1, userName2)
-        return [result['relationship']['target']['following'], result['relationship']['target']['followed_by']]
+        result = self.__account.show_friendship(source_screen_name=userName1, target_screen_name=userName2)
+        return [result[0].followed_by, result[0].following]
 
     def isFollow(self, userName1, userName2):
         'Return userName1 is followed userName2 or not.'
@@ -201,20 +201,30 @@ class TwitterCore:
     def getNoBack(self, userName, count=None):
         User = self.getUser(userName)
         followings = self.getFollowings(userName)
-        users = [user for user in followings if not self.isFollow(user, User)]
+        users = []
+        for user in followings:
+            if not self.isFollow(user.screen_name, User.screen_name):
+                users.append(user)
         return users[:count]
 
     def getMyNoBack(self, count=None):
         'Return list of users that not followed back you.You follow them but they not follow you!'
         followings = self.getMyFollowings()
         Me = self.getMyUser()
-        users = [user for user in followings if not self.isFollow(Me, user)]
+        # users = [user for user in followings if not self.isFollow(Me, user)]
+        users = []
+        for user in followings:
+            if not self.isFollow(Me.screen_name, user.screen_name):
+                users.append(user)
         return users[:count]
 
     def getNotBacked(self, userName, count=None):
         followers = self.getFollowers(userName)
         User = self.getUser(userName)
-        users = [user for user in followers if not self.isFollow(User, user)]
+        users = []
+        for user in followings:
+            if not self.isFollow(User.screen_name, user.screen_name):
+                users.append(user)
         return users[:count]
 
     def getMyNotBacked(self, count=None):
