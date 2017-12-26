@@ -62,16 +62,16 @@ class TwitterCLI(Cmd):
         if not text:
             if len(commands) == 1:
                 completions = self.SHOW_USERS[:]
-            elif len(commands) == 2 and 'me' in line:
+            elif len(commands) == 2 and commands[1] == 'me':
                 completions = self.SHOW_COMMANDS[:]
-            elif len(commands) == 3:
+            elif len(commands) == 3 and commands[1] == 'user':
                 completions = self.SHOW_COMMANDS[:]
         else:
             if len(commands) == 2:
                 completions = [f for f in self.SHOW_USERS if f.startswith(text)]
-            elif len(commands) == 3 and 'me' in line:
+            elif len(commands) == 3 and commands[1] == 'me':
                 completions = [f for f in self.SHOW_COMMANDS if f.startswith(text)]
-            elif len(commands) == 4:
+            elif len(commands) == 4 and commands[1] == 'user':
                 completions = [f for f in self.SHOW_COMMANDS if f.startswith(text)]
         return completions
 
