@@ -98,27 +98,27 @@ class TwitterCore:
         if count is None:
             return tweepy.Cursor(self.__account.followers, screen_name=userName).items()
         else:
-            return tweepy.Cursor(self.__account.followers, screen_name=userName, count=count).items()
+            return tweepy.Cursor(self.__account.followers, screen_name=userName).items(count)
 
     def getMyFollowers(self, count=None):
         myUserName = self.getMyUser().screen_name
         if count is None:
             return tweepy.Cursor(self.__account.followers, screen_name=myUserName).items()
         else:
-            return tweepy.Cursor(self.__account.followers, screen_name=myUserName, count=count).items()
+            return tweepy.Cursor(self.__account.followers, screen_name=myUserName).items(count)
 
     def getFollowings(self, userName, count=None):
         if count is None:
             return tweepy.Cursor(self.__account.friends, screen_name=userName).items()
         else:
-            return tweepy.Cursor(self.__account.friends, screen_name=userName, count=count).items()
+            return tweepy.Cursor(self.__account.friends, screen_name=userName).items(count)
 
     def getMyFollowings(self, count=None):
         myUserName = self.getMyUser().screen_name
         if count is None:
             return tweepy.Cursor(self.__account.friends, screen_name=myUserName).items()
         else:
-            return tweepy.Cursor(self.__account.friends, screen_name=myUserName, count=count).items()
+            return tweepy.Cursor(self.__account.friends, screen_name=myUserName).items(count)
 
     def getFriends(self, userName, count=None):
         followings = [user for user in self.getFollowings(userName)]
@@ -143,30 +143,35 @@ class TwitterCore:
     def friendShip(self, userName1, userName2):
         'Return status of userName1 and userName2->[is_userName1_follow_userName2, is_userName2_follow_userName1]'
         result = self.__account.show_friendship(source_screen_name=userName1, target_screen_name=userName2)
-        return [result[0].followed_by, result[0].following]
+        return [result[0].following, result[0].followed_by]
 
     def isFollow(self, userName1, userName2):
         'Return userName1 is followed userName2 or not.'
         return self.friendShip(userName1, userName2)[0]
 
+    def isFriend(self, userName1, userName2):
+        'Return both of userName1 and userName2 followed each other or not.'
+        friendShip = self.friendShip(userName1, userName2)[0]
+        return friendShip[0] and friendShip[1]
+
     def getHome(self, count=None):
         if count is None:
             return tweepy.Cursor(self.__account.home_timeline).items()
         else:
-            return tweepy.Cursor(self.__account.home_timeline, count=count).items()
+            return tweepy.Cursor(self.__account.home_timeline).items(count)
 
     def getTimeline(self, userName, count=None):
         if count is None:
             return tweepy.Cursor(self.__account.user_timeline, screen_name = userName).items()
         else:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name = userName, count=count).items()
+            return tweepy.Cursor(self.__account.user_timeline, screen_name = userName).items(count)
 
     def getMyTimeline(self, count=None):
         myUserName = self.getMyUser().screen_name
         if count is None:
             return tweepy.Cursor(self.__account.user_timeline, screen_name = myUserName).items()
         else:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name = myUserName, count=count).items()
+            return tweepy.Cursor(self.__account.user_timeline, screen_name = myUserName).items(count)
 
     def isMention(self, tweet):
         return tweet.in_reply_to_status_id is not None
@@ -222,7 +227,7 @@ class TwitterCore:
         followers = self.getFollowers(userName)
         User = self.getUser(userName)
         users = []
-        for user in followings:
+        for user in followers:
             if not self.isFollow(User.screen_name, user.screen_name):
                 users.append(user)
         return users[:count]
