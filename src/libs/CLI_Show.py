@@ -112,7 +112,7 @@ class TwitterCLIShow:
 
     def displayFriends(self, userName, count=None):
         "Show users both hi/she and them followed each other"
-        users = self.__account.getFriends() if count is None else self.__account.getFriends(userName, count)
+        users = self.__account.getFriends(userName) if count is None else self.__account.getFriends(userName, count)
         print("\nUser %s Friends:"%userName)
         print("==============================")
         for user in users:
@@ -160,7 +160,7 @@ class TwitterCLIShow:
 
     def displayNotBacked(self, userName, count=None):
         "Show users not followed back by user"
-        users = self.__account.getNotBacked() if count is None else self.__account.getNotBacked(userName, count)
+        users = self.__account.getNotBacked(userName) if count is None else self.__account.getNotBacked(userName, count)
         print("\nUser %s Did Not Followed Back:"%userName)
         print("==============================")
         for user in users:
@@ -172,7 +172,7 @@ class TwitterCLIShow:
 
     def displayOwnerHome(self, count=None):
         "Show owner tweets in home"
-        tweets = self.__account.getHome()
+        tweets = self.__account.getHome() if count is None else self.__account.getHome(count)
         print("\nYour Home:")
         print("==============================")
         for tweet in tweets:
