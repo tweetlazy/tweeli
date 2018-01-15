@@ -7,7 +7,8 @@ from .CLI_Show import TwitterCLIShow
 
 class TwitterCLI(Cmd):
 
-    SHOW_LEVEL_ONE = ['me', 'user']
+    MAIN_COMMANDS = ['show', 'follow' , 'unfollow', 'fave', 'unfave', 'retweet', 'me', 'user']
+    SHOW_LEVEL_ONE = ['me', 'user', 'tweet']
     SHOW_LEVEL_TWO = ['timeline', 'follower', 'following', 'friend', 'home']
     SHOW_LEVEL_SHARE = ['noback']
 
@@ -15,223 +16,334 @@ class TwitterCLI(Cmd):
         self.__twitterCore = TwitterCore()
         self.__twitterCore.login()
         self.__CLIShow = TwitterCLIShow(self.__twitterCore)
-        self.prompt='Twitter>>> '
-
-    def handleShowMe(self, line):
-        commandSegments = line.split()
-        if line == 'me':
-            self.__CLIShow.displayOwnerAccount()
-            return True
-        elif line.startswith('me timeline'):
-            if line == 'me timeline':
-                self.__CLIShow.displayOwnerTimeline()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerTimeline(int(count))
-                    return True
-        elif line.startswith('me follower'):
-            if line == 'me follower':
-                self.__CLIShow.displayOwnerFollowers()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerFollowers(int(count))
-                    return True
-        elif line.startswith('me following'):
-            if line == 'me following':
-                self.__CLIShow.displayOwnerFollowings()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerFollowings(int(count))
-                    return True
-        elif line.startswith('me friend'):
-            if line == 'me friend':
-                self.__CLIShow.displayOwnerFriends()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerFriends(int(count))
-                    return True
-        elif line.startswith('me noback'):
-            if line == 'me noback':
-                self.__CLIShow.displayOwnerNotBacked()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerNotBacked(int(count))
-                    return True
-        elif line.startswith('me home'):
-            if line == 'me home':
-                self.__CLIShow.displayOwnerHome()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerHome(int(count))
-                    return True
-        self.showError(line)
-        return False
-
-    def handleShowUser(self, line):
-        commandSegments = line.split()
-        if len(commandSegments) < 1:
-            self.showError(line)
-            return False
-        userName = commandSegments[1]
-        if len(commandSegments) == 2:
-            self.__CLIShow.displayTimeline(userName)
-            return True
-        elif commandSegments[2] == 'timeline':
-            if len(commandSegments) == 3:
-                self.__CLIShow.displayTimeline(userName)
-                return True
-            elif len(commandSegments) == 4:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayTimeline(userName, int(count))
-                    return True
-        elif commandSegments[2] == 'follower':
-            if len(commandSegments) == 3:
-                self.__CLIShow.displayFollowers(userName)
-                return True
-            elif len(commandSegments) == 4:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayFollowers(userName, int(count))
-                    return True
-        elif commandSegments[2] == 'following':
-            if len(commandSegments) == 3:
-                self.__CLIShow.displayFollowings(userName)
-                return True
-            elif len(commandSegments) == 4:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayFollowings(userName, int(count))
-                    return True
-        elif commandSegments[2] == 'friend':
-            if len(commandSegments) == 3:
-                self.__CLIShow.displayFriends(userName)
-                return True
-            elif len(commandSegments) == 4:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayFriends(userName, int(count))
-                    return True
-        elif commandSegments[2] == 'noback':
-            if len(commandSegments) == 3:
-                self.__CLIShow.displayNotBacked(userName)
-                return True
-            elif len(commandSegments) == 4:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayNotBacked(userName, int(count))
-                    return True
-        self.showError(line)
-        return False
-
-    def handleNoback(self, line):
-        commandSegments = line.split()
-        if line.startswith('noback me'):
-            if line == 'noback me':
-                self.__CLIShow.displayOwnerNoBack()
-                return True
-            elif len(commandSegments) == 3:
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayOwnerNoBack(int(count))
-                    return True
-        elif line.startswith('noback user'):
-            if len(commandSegments) == 3:
-                userName = commandSegments[2]
-                self.__CLIShow.displayNoBack(userName)
-                return True
-            elif len(commandSegments) == 4:
-                userName = commandSegments[2]
-                count = commandSegments[-1]
-                if count.isdigit():
-                    self.__CLIShow.displayNoBack(userName, int(count))
-                    return True
-
-    def showError(self, line):
-        print("*** Unknown syntax: %s"%line)
+        self.prompt =  'Twitter>>> '
+        self.__output = None
 
     def do_show(self, line):
-        commandFrags = line.split()
-        showCommandFlag = False
         if line.startswith('me'):
-            self.handleShowMe(line)
+            if not self.__CLIShow.handleShowMe(line):
+                self.error(line)
         elif line.startswith('user'):
-            self.handleShowUser(line)
+            if not self.__CLIShow.handleShowUser(line):
+                self.error(line)
         elif line.startswith('noback'):
-            self.handleNoback(line)
+            if not self.__CLIShow.handleNoback(line):
+                self.error(line)
+        elif line.startswith('tweet'):
+            commandSegments = line.split()
+            trueSyntax = False
+            if len(commandSegments) == 2:
+                tweetID = commandSegments[-1]
+                if tweetID.isdigit():
+                    try:
+                        self.__CLIShow.displayTweet(tweetID)
+                        trueSyntax = True
+                    except Exception as e:
+                        print("Error: %s"%str(e))
+            if not trueSyntax:
+                self.error(line)
+        else:
+            self.error(line)
 
     def complete_show(self, text, line, begidx, endidx):
-        commands = line.split()
+        masterCommands = line.split('|')
+        commandSegments = masterCommands[-1].split()
+        completions = []
         if not text:
-            if len(commands) == 1:
+            if len(commandSegments) == 1:
                 completions = self.SHOW_LEVEL_ONE[:] + self.SHOW_LEVEL_SHARE[:]
-            elif len(commands) == 2:
-                if commands[1] == 'noback':
+            elif len(commandSegments) == 2:
+                if commandSegments[1] == 'noback':
                     completions = self.SHOW_LEVEL_ONE[:]
-                elif commands[1] == 'me':
+                elif commandSegments[1] == 'me':
                     completions = self.SHOW_LEVEL_TWO[:] + self.SHOW_LEVEL_SHARE[:]
-            elif len(commands) == 3:
-                if commands[1] == 'user':
+            elif len(commandSegments) == 3:
+                if commandSegments[1] == 'user':
                     completions = self.SHOW_LEVEL_TWO[:-1] + self.SHOW_LEVEL_SHARE[:]
         else:
-            if len(commands) == 2:
+            if len(commandSegments) == 2:
                 completions = [f for f in self.SHOW_LEVEL_ONE + self.SHOW_LEVEL_SHARE if f.startswith(text)]
-            elif len(commands) == 3:
-                if commands[1] == 'noback':
+            elif len(commandSegments) == 3:
+                if commandSegments[1] == 'noback':
                     completions = [f for f in self.SHOW_LEVEL_ONE if f.startswith(text)]
-                elif commands[1] == 'me':
+                elif commandSegments[1] == 'me':
                     completions = [f for f in self.SHOW_LEVEL_TWO + self.SHOW_LEVEL_SHARE if f.startswith(text)]
-            elif len(commands) == 4:
-                if commands[1] == 'user':
+            elif len(commandSegments) == 4:
+                if commandSegments[1] == 'user':
                     completions = [f for f in self.SHOW_LEVEL_TWO[:-1] + self.SHOW_LEVEL_SHARE if f.startswith(text)]
         return completions
 
     def do_follow(self, line):
-        userName = line
-        try:
-            self.__twitterCore.follow(userName)
-        except Exception as e:
+        userNames = line.split(',')
+        for userName in userNames:
+            try:
+                self.__twitterCore.follow(userName)
+            except Exception as e:
                 print("Error: %s"%str(e))
 
     def do_unfollow(self, line):
-        userName = line
-        try:
-            self.__twitterCore.unFollow(userName)
-        except Exception as e:
+        userNames = line.split(',')
+        for userName in userNames:
+            try:
+                self.__twitterCore.unFollow(userName)
+            except Exception as e:
                 print("Error: %s"%str(e))
 
     def do_fave(self, line):
-        tweetId = line
-        try:
-            self.__twitterCore.fave(tweetId)
-        except Exception as e:
+        tweetIDs = line.split(',')
+        for tweetID in tweetIDs:
+            try:
+                self.__twitterCore.fave(tweetID)
+            except Exception as e:
                 print("Error: %s"%str(e))
 
     def do_unfave(self, line):
-        tweetId = line
-        try:
-            self.__twitterCore.unFave(tweetId)
-        except Exception as e:
+        tweetIDs = line.split(',')
+        for tweetID in tweetIDs:
+            try:
+                self.__twitterCore.unFave(tweetID)
+            except Exception as e:
                 print("Error: %s"%str(e))
 
     def do_retweet(self, line):
-        tweetId = line
-        try:
-            self.__twitterCore.retweet(tweetId)
-        except Exception as e:
+        tweetIDs = line.split(',')
+        for tweetID in tweetIDs:
+            try:
+                self.__twitterCore.retweet(tweetID)
+            except Exception as e:
                 print("Error: %s"%str(e))
+
+    def do_me(self, line):
+        commandSegments = line.split()
+        trueSyntax = False
+        if line == '':
+            self.__output = self.__twitterCore.getMyUser().screen_name
+            trueSyntax = True
+        elif line.startswith('timeline'):
+            if line == 'timeline':
+                self.__output = self.__twitterCore.getMyTimelineTweetIDs()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getMyTimelineTweetIDs(int(count))
+                    trueSyntax = True
+        elif line.startswith('follower'):
+            if line == 'follower':
+                self.__output = self.__twitterCore.getMyFollowerUserNames()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getMyFollowerUserNames(int(count))
+                    trueSyntax = True
+        elif line.startswith('following'):
+            if line == 'following':
+                self.__output = self.__twitterCore.getMyFollowingUserNames()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getMyFollowingUserNames(int(count))
+                    trueSyntax = True
+        elif line.startswith('friend'):
+            if line == 'friend':
+                self.__output = self.__twitterCore.getMyFriendUserNames()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getMyFriendUserNames(int(count))
+                    trueSyntax = True
+        elif line.startswith('noback'):
+            if line == 'noback':
+                self.__output = self.__twitterCore.getMeNoBackUserNames()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getMeNoBackUserNames(int(count))
+                    trueSyntax = True
+        elif line.startswith('home'):
+            if line == 'home':
+                self.__output = self.__twitterCore.getHomeTweetIDs()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getHomeTweetIDs(int(count))
+                    trueSyntax = True
+        if not trueSyntax:
+            self.error(line)
+    
+    def complete_me(self, text, line, begidx, endidx):
+        masterCommands = line.split('|')
+        commandSegments = masterCommands[-1].split()
+        completions = []
+        if not text:
+            if len(commandSegments) == 1:
+                completions = self.SHOW_LEVEL_TWO[:] + self.SHOW_LEVEL_SHARE[:]
+        else:
+            if len(commandSegments) == 2:
+                completions = [f for f in self.SHOW_LEVEL_TWO + self.SHOW_LEVEL_SHARE if f.startswith(text)]
+        return completions
+
+    def do_user(self, line):
+        commandSegments = line.split()
+        trueSyntax = False
+        if len(commandSegments) >= 1:
+            userName = commandSegments[0]
+            if len(commandSegments) == 1:
+                self.__output = self.__twitterCore.getUser(userName).screen_name
+                trueSyntax = True
+            elif commandSegments[1] == 'timeline':
+                if len(commandSegments) == 2:
+                    self.__output = self.__twitterCore.getTimelineTweetIDs(userName)
+                    trueSyntax = True
+                elif len(commandSegments) == 3:
+                    count = commandSegments[-1]
+                    if count.isdigit():
+                        self.__output = self.__twitterCore.getTimelineTweetIDs(userName, int(count))
+                        trueSyntax = True
+            elif commandSegments[1] == 'follower':
+                if len(commandSegments) == 2:
+                    self.__output = self.__twitterCore.getFollowerUserNames(userName)
+                    trueSyntax = True
+                elif len(commandSegments) == 3:
+                    count = commandSegments[-1]
+                    if count.isdigit():
+                        self.__output = self.__twitterCore.getFollowerUserNames(userName, int(count))
+                        trueSyntax = True
+            elif commandSegments[1] == 'following':
+                if len(commandSegments) == 2:
+                    self.__output = self.__twitterCore.getFollowingUserNames(userName)
+                    trueSyntax = True
+                elif len(commandSegments) == 3:
+                    count = commandSegments[-1]
+                    if count.isdigit():
+                        self.__output = self.__twitterCore.getFollowingUserNames(userName, int(count))
+                        trueSyntax = True
+            elif commandSegments[1] == 'friend':
+                if len(commandSegments) == 2:
+                    self.__output = self.__twitterCore.getFriendUserNames(userName)
+                    trueSyntax = True
+                elif len(commandSegments) == 3:
+                    count = commandSegments[-1]
+                    if count.isdigit():
+                        self.__output = self.__twitterCore.getFriendUserNames(userName, int(count))
+                        trueSyntax = True
+            elif commandSegments[1] == 'noback':
+                if len(commandSegments) == 2:
+                    self.__output = self.__twitterCore.getUserNoBackUserNames(userName)
+                    trueSyntax = True
+                elif len(commandSegments) == 3:
+                    count = commandSegments[-1]
+                    if count.isdigit():
+                        self.__output = self.__twitterCore.getUserNoBackUserNames(userName, int(count))
+                        trueSyntax = True
+        if not trueSyntax:
+            self.error(line)
+
+    def complete_user(self, text, line, begidx, endidx):
+        masterCommands = line.split('|')
+        commandSegments = masterCommands[-1].split()
+        completions = []
+        if not text:
+            if len(commandSegments) == 0:
+                completions = self.MAIN_COMMANDS[:]
+            elif len(commandSegments) == 2:
+                completions = self.SHOW_LEVEL_TWO[:] + self.SHOW_LEVEL_SHARE[:]
+        else:
+            if len(commandSegments) == 1:
+                completions = [f for f in self.MAIN_COMMANDS if f.startswith(text)]
+            elif len(commandSegments) == 3:
+                completions = [f for f in self.SHOW_LEVEL_TWO[:-1] + self.SHOW_LEVEL_SHARE if f.startswith(text)]
+        return completions
+
+    def do_noback(self, line):
+        commandSegments = line.split()
+        trueSyntax = False
+        if line.startswith('me'):
+            if len(commandSegments) == 1:
+                self.__output = self.__twitterCore.getNoBackMeUserNames()
+                trueSyntax = True
+            elif len(commandSegments) == 2:
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getNoBackMeUserNames(int(count))
+                    trueSyntax = True
+        elif line.startswith('user'):
+            if len(commandSegments) == 2:
+                userName = commandSegments[2]
+                self.__output = self.__twitterCore.getNoBackUserUserNames(userName)
+                trueSyntax = True
+            elif len(commandSegments) == 3:
+                userName = commandSegments[2]
+                count = commandSegments[-1]
+                if count.isdigit():
+                    self.__output = self.__twitterCore.getNoBackUserUserNames(userName, int(count))
+                    trueSyntax = True
+        if not trueSyntax:
+            self.error(line)
+
+    def complete_noback(self, text, line, begidx, endidx):
+        masterCommands = line.split('|')
+        commandSegments = masterCommands[-1].split()
+        completions = []
+        if not text:
+            if len(commandSegments) == 0:
+                completions = self.MAIN_COMMANDS[:]
+            elif len(commandSegments) == 1:
+                completions = self.SHOW_LEVEL_ONE[:]
+        else:
+            if len(commandSegments) == 1:
+                completions = [f for f in self.MAIN_COMMANDS if f.startswith(text)]
+            elif len(commandSegments) == 2:
+                completions = [f for f in self.SHOW_LEVEL_ONE if f.startswith(text)]
+        return completions
+
+    def do_pipe(self, args):
+        buffer = None
+        for arg in args:
+            s = arg
+            if buffer:
+                s += ' ' + buffer
+            self.onecmd(s)
+            buffer = self.__output
+
+    def complete_pipe(self, text, line, begidx, endidx):
+        masterCommands = line.split('|')
+        commandSegments = masterCommands[-1].split()
+        completions = []
+        if not text:
+            if len(commandSegments) == 0:
+                completions = self.MAIN_COMMANDS[:]
+            elif commandSegments[0] in self.MAIN_COMMANDS:
+                if hasattr(self, 'complete_' + commandSegments[0]):
+                    method = getattr(self, 'complete_' + commandSegments[0])
+                    return method(text, masterCommands[-1], begidx, endidx)
+        else:
+            if len(commandSegments) == 1:
+                completions = [f for f in self.MAIN_COMMANDS if f.startswith(text)]
+            elif commandSegments[0] in self.MAIN_COMMANDS:
+                if hasattr(self, 'complete_' + commandSegments[0]):
+                    method = getattr(self, 'complete_' + commandSegments[0])
+                    return method(text, masterCommands[-1], begidx, endidx)
+        return completions
+
+    def postcmd(self, stop, line):
+        if self.__output:
+            print(self.__output)
+            self.__output = None
+        return stop
+
+    def parseline(self, line):
+        if '|' in line:
+            return 'pipe', line.split('|'), line
+        return Cmd.parseline(self, line)
+
+    def error(self, line):
+        self.__output = "*** Unknown syntax: %s"%line
 
     def do_exit(self, line):
         exit(1)

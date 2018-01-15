@@ -59,40 +59,14 @@ class TwitterCore:
 
         return consumerKey, consumerSecret, accessKey, accessSecret, proxy
 
-    def __showUserObj(self, userObj):
-        'Convert user object of tweepy to dictionary'
-
-        # Create a dictionary from neccessary informations of a user objec
-        User = {'Name':userObj.name,
-                'Username':userObj.screen_name,
-                'Bio':userObj.description,
-                'ID':userObj.id,
-                'Protected':userObj.protected,
-                'Location':userObj.location,
-                'Creation Date':userObj.created_at,
-                'Verified':userObj.verified,
-                'Language':userObj.lang,
-                'Followers Count':userObj.followers_count,
-                'Followings Count':userObj.friends_count,
-                'Favourites Count':userObj.favourites_count,
-                'Tweets Count':userObj.statuses_count,
-                'Lists Count':userObj.listed_count
-                }
-        return User
-
-    def showUser(self, userName):
-        userObj = self.getUser(userName)
-        return self.__showUserObj(userObj)
-
-    def showMyUser(self):
-        userObj = self.getMyUser()
-        return self.__showUserObj(userObj)
-
     def getUser(self, userName):
         return self.__account.get_user(screen_name=userName)
 
     def getMyUser(self):
         return self.__account.me()
+
+    def getTweet(self, tweetID):
+        return self.__account.get_status(id=tweetID)
 
     def getFollowers(self, userName, count=None):
         if count is None:
@@ -100,12 +74,37 @@ class TwitterCore:
         else:
             return tweepy.Cursor(self.__account.followers, screen_name=userName).items(count)
 
+    def getFollowerIDs(self, userName, count=None):
+        followers = self.getFollowers(userName) if count is None else self.getFollowers(userName, count)
+        followerIDs = []
+        for follower in followers:
+            followerIDs.append(str(follower.id))
+        return ','.join(followerIDs)
+
+    def getFollowerUserNames(self, userName, count=None):
+        followers = self.getFollowers(userName) if count is None else self.getFollowers(userName, count)
+        followerUserNames = []
+        for follower in followers:
+            followerUserNames.append(follower.screen_name)
+        return ','.join(followerUserNames)
+
     def getMyFollowers(self, count=None):
         myUserName = self.getMyUser().screen_name
-        if count is None:
-            return tweepy.Cursor(self.__account.followers, screen_name=myUserName).items()
-        else:
-            return tweepy.Cursor(self.__account.followers, screen_name=myUserName).items(count)
+        return self.getFollowers(myUserName) if count is None else self.getFollowers(myUserName, count)
+
+    def getMyFollowerIDs(self, count=None):
+        followers = self.getMyFollowers() if count is None else self.getMyFollowers(count)
+        followerIDs = []
+        for follower in followers:
+            followerIDs.append(str(follower.id))
+        return ','.join(followerIDs)
+
+    def getMyFollowerUserNames(self, count=None):
+        followers = self.getMyFollowers() if count is None else self.getMyFollowers(count)
+        followerUserNames = []
+        for follower in followers:
+            followerUserNames.append(follower.screen_name)
+        return ','.join(followerUserNames)
 
     def getFollowings(self, userName, count=None):
         if count is None:
@@ -113,12 +112,37 @@ class TwitterCore:
         else:
             return tweepy.Cursor(self.__account.friends, screen_name=userName).items(count)
 
+    def getFollowingIDs(self, userName, count=None):
+        followings = self.getFollowings(userName) if count is None else self.getFollowings(userName, count)
+        followingIDs = []
+        for following in followings:
+            followingIDs.append(str(following.id))
+        return ','.join(followingIDs)
+
+    def getFollowingUserNames(self, userName, count=None):
+        followings = self.getFollowings(userName) if count is None else self.getFollowings(userName, count)
+        followingUserNames = []
+        for following in followings:
+            followingUserNames.append(str(following.screen_name))
+        return ','.join(followingUserNames)
+
     def getMyFollowings(self, count=None):
         myUserName = self.getMyUser().screen_name
-        if count is None:
-            return tweepy.Cursor(self.__account.friends, screen_name=myUserName).items()
-        else:
-            return tweepy.Cursor(self.__account.friends, screen_name=myUserName).items(count)
+        return self.getFollowings(myUserName) if count is None else self.getFollowings(myUserName, count)
+
+    def getMyFollowingIDs(self, count=None):
+        followings = self.getMyFollowings() if count is None else self.getMyFollowings(count)
+        followingIDs = []
+        for following in followings:
+            followingIDs.append(str(following.id))
+        return ','.join(followingIDs)
+
+    def getMyFollowingUserNames(self, count=None):
+        followings = self.getMyFollowings() if count is None else self.getMyFollowings(count)
+        followingUserNames = []
+        for following in followings:
+            followingUserNames.append(following.screen_name)
+        return ','.join(followingUserNames)
 
     def getFriends(self, userName, count=None):
         followings = [user for user in self.getFollowings(userName)]
@@ -126,11 +150,35 @@ class TwitterCore:
         users = [user for user in followings if user.screen_name in followersName]
         return users[:count]
 
+    def getFriendIDs(self, userName, count=None):
+        followings = [user for user in self.getFollowings(userName)]
+        followersName = [user.screen_name for user in self.getFollowers(userName)]
+        users = [str(user.id) for user in followings if user.screen_name in followersName]
+        return ','.join(users[:count])
+
+    def getFriendUserNames(self, userName, count=None):
+        followings = [user for user in self.getFollowings(userName)]
+        followersName = [user.screen_name for user in self.getFollowers(userName)]
+        users = [user.screen_name for user in followings if user.screen_name in followersName]
+        return ','.join(users[:count])
+
     def getMyFriends(self, count=None):
         followings = [user for user in self.getMyFollowings()]
         followersName = [user.screen_name for user in self.getMyFollowers()]
         users = [user for user in followings if user.screen_name in followersName]
         return users[:count]
+
+    def getMyFriendIDs(self, count=None):
+        followings = [user for user in self.getMyFollowings()]
+        followersName = [user.screen_name for user in self.getMyFollowers()]
+        users = [str(user.id) for user in followings if user.screen_name in followersName]
+        return ','.join(users[:count])
+
+    def getMyFriendUserNames(self, count=None):
+        followings = [user for user in self.getMyFollowings()]
+        followersName = [user.screen_name for user in self.getMyFollowers()]
+        users = [user.screen_name for user in followings if user.screen_name in followersName]
+        return ','.join(users[:count])
 
     def follow(self, userName):
         userObj = self.getUser(userName)
@@ -160,50 +208,53 @@ class TwitterCore:
         else:
             return tweepy.Cursor(self.__account.home_timeline).items(count)
 
+    def getHomeTweetIDs(self, count=None):
+        tweets = self.getHome() if count is None else self.getHome(count)
+        tweetIDs = []
+        for tweet in tweets:
+            tweetIDs.append(str(tweet.id))
+        return ','.join(tweetIDs)
+
     def getTimeline(self, userName, count=None):
         if count is None:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name = userName).items()
+            return tweepy.Cursor(self.__account.user_timeline, screen_name=userName).items()
         else:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name = userName).items(count)
+            return tweepy.Cursor(self.__account.user_timeline, screen_name=userName).items(count)
+
+    def getTimelineTweetIDs(self, userName, count=None):
+        tweets = self.getTimeline(userName) if count is None else self.getTimeline(userName, count)
+        tweetIDs = []
+        for tweet in tweets:
+            tweetIDs.append(str(tweet.id))
+        return ','.join(tweetIDs)
 
     def getMyTimeline(self, count=None):
         myUserName = self.getMyUser().screen_name
         if count is None:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name = myUserName).items()
+            return tweepy.Cursor(self.__account.user_timeline, screen_name=myUserName).items()
         else:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name = myUserName).items(count)
+            return tweepy.Cursor(self.__account.user_timeline, screen_name=myUserName).items(count)
+
+    def getMyTimelineTweetIDs(self, count=None):
+        tweets = self.getMyTimeline() if count is None else self.getMyTimeline(count)
+        tweetIDs = []
+        for tweet in tweets:
+            tweetIDs.append(str(tweet.id))
+        return ','.join(tweetIDs)
 
     def isMention(self, tweet):
         return tweet.in_reply_to_status_id is not None
 
-    def fave(self, tweetId):
-        self.__account.create_favorite(tweetId)
+    def fave(self, tweetID):
+        self.__account.create_favorite(tweetID)
 
-    def unFave(self, tweetId):
-        self.__account.destroy_favorite(tweetId)
+    def unFave(self, tweetID):
+        self.__account.destroy_favorite(tweetID)
 
-    def faveAll(self, userName):
-        tweets = self.getTimeline(userName)
-        for tweet in tweets:
-            if not self.isMention(tweet):
-                try:
-                    self.fave(tweet.id)
-                except Exception as e:
-                    print(e)
+    def retweet(self, tweetID):
+        self.__account.retweet(tweetID)
 
-    def retweet(self, tweetId):
-        self.__account.retweet(tweetId)
-
-    def retweetAll(self, userName):
-        tweets = self.getTimeline(userName)
-        for tweet in tweets:
-            if not self.isMention(tweet):
-                try:
-                    self.retweet(tweet.id)
-                except Exception as e:
-                    print(e)
-
-    def getNoBack(self, userName, count=None):
+    def getNoBackUser(self, userName, count=None):
         User = self.getUser(userName)
         followings = self.getFollowings(userName)
         users = []
@@ -212,18 +263,54 @@ class TwitterCore:
                 users.append(user)
         return users[:count]
 
-    def getMyNoBack(self, count=None):
+    def getNoBackUserIDs(self, count=None):
+        User = self.getUser(userName)
+        followings = self.getFollowings(userName)
+        users = []
+        for user in followings:
+            if not self.isFollow(user.screen_name, User.screen_name):
+                users.append(str(user.id))
+        return ','.join(users[:count])
+
+    def getNoBackUserUserNames(self, count=None):
+        User = self.getUser(userName)
+        followings = self.getFollowings(userName)
+        users = []
+        for user in followings:
+            if not self.isFollow(user.screen_name, User.screen_name):
+                users.append(user.screen_name)
+        return ','.join(users[:count])
+
+    def getNoBackMe(self, count=None):
         'Return list of users that not followed back you.You follow them but they not follow you!'
         followings = self.getMyFollowings()
         Me = self.getMyUser()
         # users = [user for user in followings if not self.isFollow(Me, user)]
         users = []
         for user in followings:
-            if not self.isFollow(Me.screen_name, user.screen_name):
+            if not self.isFollow(user.screen_name, Me.screen_name):
                 users.append(user)
         return users[:count]
+    
+    def getNoBackMeIDs(self, count=None):
+        followings = self.getMyFollowings()
+        Me = self.getMyUser()
+        users = []
+        for user in followings:
+            if not self.isFollow(user.screen_name, Me.screen_name):
+                users.append(str(user.id))
+        return ','.join(users[:count])
 
-    def getNotBacked(self, userName, count=None):
+    def getNoBackMeUserNames(self, count=None):
+        followings = self.getMyFollowings()
+        Me = self.getMyUser()
+        users = []
+        for user in followings:
+            if not self.isFollow(user.screen_name, Me.screen_name):
+                users.append(user.screen_name)
+        return ','.join(users[:count])
+
+    def getUserNoBack(self, userName, count=None):
         followers = self.getFollowers(userName)
         User = self.getUser(userName)
         users = []
@@ -232,10 +319,38 @@ class TwitterCore:
                 users.append(user)
         return users[:count]
 
-    def getMyNotBacked(self, count=None):
+    def getUserNoBackIDs(self, userName, count=None):
+        followers = self.getFollowers(userName)
+        User = self.getUser(userName)
+        users = []
+        for user in followers:
+            if not self.isFollow(User.screen_name, user.screen_name):
+                users.append(str(user.id))
+        return ','.join(users[:count])
+
+    def getUserNoBackUserNames(self, userName, count=None):
+        followers = self.getFollowers(userName)
+        User = self.getUser(userName)
+        users = []
+        for user in followers:
+            if not self.isFollow(User.screen_name, user.screen_name):
+                users.append(user.screen_name)
+        return ','.join(users[:count])
+
+    def getMeNoBack(self, count=None):
         followers = self.getMyFollowers()
         users = [user for user in followers if not user.following]
         return users[:count]
+
+    def getMeNoBackIDs(self, count=None):
+        followers = self.getMyFollowers()
+        users = [str(user.id) for user in followers if not user.following]
+        return ','.join(users[:count])
+
+    def getMeNoBackUserNames(self, count=None):
+        followers = self.getMyFollowers()
+        users = [user.screen_name for user in followers if not user.following]
+        return ','.join(users[:count])
 
 if __name__ == '__main__':
     pass
