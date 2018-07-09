@@ -77,7 +77,7 @@ class TwitterCLI(Cmd):
         userNames = line.split(',')
         for userName in userNames:
             try:
-                self.__twitterCore.follow(userName)
+                self.__twitterCore.follow(userName=userName)
             except Exception as e:
                 print("Error: %s"%str(e))
 
@@ -85,7 +85,7 @@ class TwitterCLI(Cmd):
         userNames = line.split(',')
         for userName in userNames:
             try:
-                self.__twitterCore.unFollow(userName)
+                self.__twitterCore.unFollow(userName=userName)
             except Exception as e:
                 print("Error: %s"%str(e))
 
@@ -93,7 +93,7 @@ class TwitterCLI(Cmd):
         tweetIDs = line.split(',')
         for tweetID in tweetIDs:
             try:
-                self.__twitterCore.fave(tweetID)
+                self.__twitterCore.fave(tweetID=tweetID)
             except Exception as e:
                 print("Error: %s"%str(e))
 
@@ -101,7 +101,7 @@ class TwitterCLI(Cmd):
         tweetIDs = line.split(',')
         for tweetID in tweetIDs:
             try:
-                self.__twitterCore.unFave(tweetID)
+                self.__twitterCore.unFave(tweetID=tweetID)
             except Exception as e:
                 print("Error: %s"%str(e))
 
@@ -109,7 +109,7 @@ class TwitterCLI(Cmd):
         tweetIDs = line.split(',')
         for tweetID in tweetIDs:
             try:
-                self.__twitterCore.retweet(tweetID)
+                self.__twitterCore.retweet(tweetID=tweetID)
             except Exception as e:
                 print("Error: %s"%str(e))
 
@@ -126,7 +126,7 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getMyTimelineTweetIDs(int(count))
+                    self.__output = self.__twitterCore.getMyTimelineTweetIDs(count=int(count))
                     trueSyntax = True
         elif line.startswith('follower'):
             if line == 'follower':
@@ -135,7 +135,7 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getMyFollowerUserNames(int(count))
+                    self.__output = self.__twitterCore.getMyFollowerUserNames(count=int(count))
                     trueSyntax = True
         elif line.startswith('following'):
             if line == 'following':
@@ -144,7 +144,7 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getMyFollowingUserNames(int(count))
+                    self.__output = self.__twitterCore.getMyFollowingUserNames(count=int(count))
                     trueSyntax = True
         elif line.startswith('friend'):
             if line == 'friend':
@@ -153,7 +153,7 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getMyFriendUserNames(int(count))
+                    self.__output = self.__twitterCore.getMyFriendUserNames(count=int(count))
                     trueSyntax = True
         elif line.startswith('noback'):
             if line == 'noback':
@@ -162,7 +162,7 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getMeNoBackUserNames(int(count))
+                    self.__output = self.__twitterCore.getMeNoBackUserNames(count=int(count))
                     trueSyntax = True
         elif line.startswith('home'):
             if line == 'home':
@@ -171,7 +171,7 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getHomeTweetIDs(int(count))
+                    self.__output = self.__twitterCore.getHomeTweetIDs(count=int(count))
                     trueSyntax = True
         if not trueSyntax:
             self.error(line)
@@ -194,34 +194,34 @@ class TwitterCLI(Cmd):
         if len(commandSegments) >= 1:
             userName = commandSegments[0]
             if len(commandSegments) == 1:
-                self.__output = self.__twitterCore.getUser(userName).screen_name
+                self.__output = self.__twitterCore.getUser(userName=userName).screen_name
                 trueSyntax = True
             elif commandSegments[1] == 'timeline':
                 if len(commandSegments) == 2:
-                    self.__output = self.__twitterCore.getTimelineTweetIDs(userName)
+                    self.__output = self.__twitterCore.getTimelineTweetIDs(userName=userName)
                     trueSyntax = True
                 elif len(commandSegments) == 3:
                     count = commandSegments[-1]
                     if count.isdigit():
-                        self.__output = self.__twitterCore.getTimelineTweetIDs(userName, int(count))
+                        self.__output = self.__twitterCore.getTimelineTweetIDs(userName=userName, count=int(count))
                         trueSyntax = True
             elif commandSegments[1] == 'follower':
                 if len(commandSegments) == 2:
-                    self.__output = self.__twitterCore.getFollowerUserNames(userName)
+                    self.__output = self.__twitterCore.getFollowerUserNames(userName=userName)
                     trueSyntax = True
                 elif len(commandSegments) == 3:
                     count = commandSegments[-1]
                     if count.isdigit():
-                        self.__output = self.__twitterCore.getFollowerUserNames(userName, int(count))
+                        self.__output = self.__twitterCore.getFollowerUserNames(userName=userName, count=int(count))
                         trueSyntax = True
             elif commandSegments[1] == 'following':
                 if len(commandSegments) == 2:
-                    self.__output = self.__twitterCore.getFollowingUserNames(userName)
+                    self.__output = self.__twitterCore.getFollowingUserNames(userName=userName)
                     trueSyntax = True
                 elif len(commandSegments) == 3:
                     count = commandSegments[-1]
                     if count.isdigit():
-                        self.__output = self.__twitterCore.getFollowingUserNames(userName, int(count))
+                        self.__output = self.__twitterCore.getFollowingUserNames(userName=userName, count=int(count))
                         trueSyntax = True
             elif commandSegments[1] == 'friend':
                 if len(commandSegments) == 2:
@@ -230,16 +230,16 @@ class TwitterCLI(Cmd):
                 elif len(commandSegments) == 3:
                     count = commandSegments[-1]
                     if count.isdigit():
-                        self.__output = self.__twitterCore.getFriendUserNames(userName, int(count))
+                        self.__output = self.__twitterCore.getFriendUserNames(userName=userName, count=int(count))
                         trueSyntax = True
             elif commandSegments[1] == 'noback':
                 if len(commandSegments) == 2:
-                    self.__output = self.__twitterCore.getUserNoBackUserNames(userName)
+                    self.__output = self.__twitterCore.getUserNoBackUserNames(userName=userName)
                     trueSyntax = True
                 elif len(commandSegments) == 3:
                     count = commandSegments[-1]
                     if count.isdigit():
-                        self.__output = self.__twitterCore.getUserNoBackUserNames(userName, int(count))
+                        self.__output = self.__twitterCore.getUserNoBackUserNames(userName=userName, count=int(count))
                         trueSyntax = True
         if not trueSyntax:
             self.error(line)
@@ -270,18 +270,18 @@ class TwitterCLI(Cmd):
             elif len(commandSegments) == 2:
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getNoBackMeUserNames(int(count))
+                    self.__output = self.__twitterCore.getNoBackMeUserNames(count=int(count))
                     trueSyntax = True
         elif line.startswith('user'):
             if len(commandSegments) == 2:
                 userName = commandSegments[2]
-                self.__output = self.__twitterCore.getNoBackUserUserNames(userName)
+                self.__output = self.__twitterCore.getNoBackUserUserNames(userName=userName)
                 trueSyntax = True
             elif len(commandSegments) == 3:
                 userName = commandSegments[2]
                 count = commandSegments[-1]
                 if count.isdigit():
-                    self.__output = self.__twitterCore.getNoBackUserUserNames(userName, int(count))
+                    self.__output = self.__twitterCore.getNoBackUserUserNames(userName=userName, count=int(count))
                     trueSyntax = True
         if not trueSyntax:
             self.error(line)

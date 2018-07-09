@@ -1,9 +1,7 @@
 
-import tweepy
+import tweepy, flask, json
 from configparser import ConfigParser
 from os import path
-import os
-from sys import exit
 
 CONFIG_PATH = 'config/twitter_account_manager.ini'
 
@@ -12,13 +10,34 @@ class TwitterCore:
     def __init__(self):
         self.__account = None
 
-    def login(self):
-        'Login to account that exist in config file'
+    def login(self, **kwargs):
+        'Login to account'
 
-        # Get params from config file
-        parser = self.__initConfig()
-        consumerKey, consumerSecret, accessKey, accessSecret, proxy = self.__getConfig(parser)
-
+        if kwargs == {}:
+            # Get params from config file
+            parser = self.__initConfig()
+            consumerKey, consumerSecret, accessKey, accessSecret, proxy = self.__getConfig(parser)
+        else:
+            if "consumerKey" in kwargs:
+                consumerKey = kwargs["consumerKey"]
+            else:
+                return {'status_code':'400', 'description':'Param consumerKey Is Not Exist!'}
+            if "consumerSecret" in kwargs:
+                consumerSecret = kwargs["consumerSecret"]
+            else:
+                return {'status_code':'400', 'description':'Param consumerSecret Is Not Exist!'}
+            if "accessKey" in kwargs:
+                accessKey = kwargs["accessKey"]
+            else:
+                return {'status_code':'400', 'description':'Param accessKey Is Not Exist!'}
+            if "accessSecret" in kwargs:
+                accessSecret = kwargs["accessSecret"]
+            else:
+                return {'status_code':'400', 'description':'Param accessSecret Is Not Exist!'}
+            if "proxy" in kwargs:
+                proxy = kwargs["proxy"]
+            else:
+                proxy = None
         # Login proccess
         auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
         auth.set_access_token(accessKey, accessSecret)
@@ -26,13 +45,14 @@ class TwitterCore:
             self.__account = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
         else:
             self.__account = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, proxy=proxy)
+        return True
 
     def __initConfig(self):
         'Return parser of config file'
 
         # Check config file is exist or not
         if not path.exists(CONFIG_PATH):
-            print('[X] Config file does not exist or is invalid.')
+            print('[X] Config file is not exist or is invalid.')
             exit(1)
 
         # Read config file
@@ -59,298 +79,491 @@ class TwitterCore:
 
         return consumerKey, consumerSecret, accessKey, accessSecret, proxy
 
-    def getUser(self, userName):
-        return self.__account.get_user(screen_name=userName)
+    def getUser(self, **kwargs):
+        if "userName" in kwargs:
+            userName = kwargs["userName"]
+            response = self.__account.get_user(screen_name=userName)
+            return response
+        else:
+            raise ValueError('Param userName is not exist!')
 
-    def getMyUser(self):
+    def getMyUser(self, **kwargs):
         return self.__account.me()
 
-    def getTweet(self, tweetID):
-        return self.__account.get_status(id=tweetID)
+    def getTweet(self, **kwargs):
+        if "tweetID" in kwargs:
+            tweetID = kwargs["tweetID"]
+            return self.__account.get_status(id=tweetID)
+        else:
+            raise ValueError('Param tweetID is not exist!')
 
-    def getFollowers(self, userName, count=None):
-        if count is None:
+    def getFollowers(self, **kwargs):
+        if "userName" in kwargs:
+            userName = kwargs["userName"]
+            if "count" in kwargs:
+                count = int(kwargs["count"])
+                if count is not None:
+                    return tweepy.Cursor(self.__account.followers, screen_name=userName).items(count)
             return tweepy.Cursor(self.__account.followers, screen_name=userName).items()
         else:
-            return tweepy.Cursor(self.__account.followers, screen_name=userName).items(count)
+            raise ValueError('Param userName is not exist!')
 
-    def getFollowerIDs(self, userName, count=None):
-        followers = self.getFollowers(userName) if count is None else self.getFollowers(userName, count)
-        followerIDs = []
+    def getFollowerIDs(self, **kwargs):
+        followers = self.getFollowers(**kwargs)
+        followerIDs = ''
         for follower in followers:
-            followerIDs.append(str(follower.id))
-        return ','.join(followerIDs)
+            followerIDs += ',' + (str(follower.id))
+        return followerIDs[1:]
 
-    def getFollowerUserNames(self, userName, count=None):
-        followers = self.getFollowers(userName) if count is None else self.getFollowers(userName, count)
-        followerUserNames = []
+    def getFollowerUserNames(self, **kwargs):
+        followers = self.getFollowers(**kwargs)
+        followerUserNames = ''
         for follower in followers:
-            followerUserNames.append(follower.screen_name)
-        return ','.join(followerUserNames)
+            followerUserNames += ',' + (follower.screen_name)
+        return followerUserNames[1:]
 
-    def getMyFollowers(self, count=None):
+    def getMyFollowers(self, **kwargs):
         myUserName = self.getMyUser().screen_name
-        return self.getFollowers(myUserName) if count is None else self.getFollowers(myUserName, count)
+        kwargs["userName"] = myUserName
+        return self.getFollowers(**kwargs)
 
-    def getMyFollowerIDs(self, count=None):
-        followers = self.getMyFollowers() if count is None else self.getMyFollowers(count)
-        followerIDs = []
+    def getMyFollowerIDs(self, **kwargs):
+        followers = self.getMyFollowers(**kwargs)
+        followerIDs = ''
         for follower in followers:
-            followerIDs.append(str(follower.id))
-        return ','.join(followerIDs)
+            followerIDs += ',' + (str(follower.id))
+        return followerIDs[1:]
 
-    def getMyFollowerUserNames(self, count=None):
-        followers = self.getMyFollowers() if count is None else self.getMyFollowers(count)
-        followerUserNames = []
+    def getMyFollowerUserNames(self, **kwargs):
+        followers = self.getMyFollowers(**kwargs)
+        followerUserNames = ''
         for follower in followers:
-            followerUserNames.append(follower.screen_name)
-        return ','.join(followerUserNames)
+            followerUserNames += ',' + (follower.screen_name)
+        return followerUserNames[1:]
 
-    def getFollowings(self, userName, count=None):
-        if count is None:
+    def getFollowings(self, **kwargs):
+        if "userName" in kwargs:
+            userName = kwargs["userName"]
+            if "count" in kwargs:
+                count = int(kwargs["count"])
+                if count is not None:
+                    return tweepy.Cursor(self.__account.friends, screen_name=userName).items(count)
             return tweepy.Cursor(self.__account.friends, screen_name=userName).items()
         else:
-            return tweepy.Cursor(self.__account.friends, screen_name=userName).items(count)
+            raise ValueError('Param userName is not exist!')
 
-    def getFollowingIDs(self, userName, count=None):
-        followings = self.getFollowings(userName) if count is None else self.getFollowings(userName, count)
-        followingIDs = []
+    def getFollowingIDs(self, **kwargs):
+        followings = self.getFollowings(**kwargs)
+        followingIDs = ''
         for following in followings:
-            followingIDs.append(str(following.id))
-        return ','.join(followingIDs)
+            followingIDs += ',' + (str(following.id))
+        return followingIDs[1:]
 
-    def getFollowingUserNames(self, userName, count=None):
-        followings = self.getFollowings(userName) if count is None else self.getFollowings(userName, count)
-        followingUserNames = []
+    def getFollowingUserNames(self, **kwargs):
+        followings = self.getFollowings(**kwargs)
+        followingUserNames = ''
         for following in followings:
-            followingUserNames.append(str(following.screen_name))
-        return ','.join(followingUserNames)
+            followingUserNames += ',' + (str(following.screen_name))
+        return followingUserNames[1:]
 
-    def getMyFollowings(self, count=None):
+    def getMyFollowings(self, **kwargs):
         myUserName = self.getMyUser().screen_name
-        return self.getFollowings(myUserName) if count is None else self.getFollowings(myUserName, count)
+        kwargs["userName"] = myUserName
+        return self.getFollowings(**kwargs)
 
-    def getMyFollowingIDs(self, count=None):
-        followings = self.getMyFollowings() if count is None else self.getMyFollowings(count)
-        followingIDs = []
+    def getMyFollowingIDs(self, **kwargs):
+        followings = self.getMyFollowings(**kwargs)
+        followingIDs = ''
         for following in followings:
-            followingIDs.append(str(following.id))
-        return ','.join(followingIDs)
+            followingIDs += ',' + (str(following.id))
+        return followingIDs[1:]
 
-    def getMyFollowingUserNames(self, count=None):
-        followings = self.getMyFollowings() if count is None else self.getMyFollowings(count)
-        followingUserNames = []
+    def getMyFollowingUserNames(self, **kwargs):
+        followings = self.getMyFollowings(**kwargs)
+        followingUserNames = ''
         for following in followings:
-            followingUserNames.append(following.screen_name)
-        return ','.join(followingUserNames)
+            followingUserNames += ',' + (following.screen_name)
+        return followingUserNames[1:]
 
-    def getFriends(self, userName, count=None):
-        followings = [user for user in self.getFollowings(userName)]
-        followersName = [user.screen_name for user in self.getFollowers(userName)]
+    def getFriends(self, **kwargs):
+        followings = [user for user in self.getFollowings(**kwargs)]
+        followersName = [user.screen_name for user in self.getFollowers(**kwargs)]
         users = [user for user in followings if user.screen_name in followersName]
+        count = int(kwargs["count"])
         return users[:count]
 
-    def getFriendIDs(self, userName, count=None):
-        followings = [user for user in self.getFollowings(userName)]
-        followersName = [user.screen_name for user in self.getFollowers(userName)]
+    def getFriendIDs(self, **kwargs):
+        followings = [user for user in self.getFollowings(**kwargs)]
+        followersName = [user.screen_name for user in self.getFollowers(**kwargs)]
         users = [str(user.id) for user in followings if user.screen_name in followersName]
+        count = int(kwargs["count"])
         return ','.join(users[:count])
 
-    def getFriendUserNames(self, userName, count=None):
-        followings = [user for user in self.getFollowings(userName)]
-        followersName = [user.screen_name for user in self.getFollowers(userName)]
+    def getFriendUserNames(self, **kwargs):
+        followings = [user for user in self.getFollowings(**kwargs)]
+        followersName = [user.screen_name for user in self.getFollowers(**kwargs)]
         users = [user.screen_name for user in followings if user.screen_name in followersName]
+        count = int(kwargs["count"])
         return ','.join(users[:count])
 
-    def getMyFriends(self, count=None):
+    def getMyFriends(self, **kwargs):
         followings = [user for user in self.getMyFollowings()]
         followersName = [user.screen_name for user in self.getMyFollowers()]
         users = [user for user in followings if user.screen_name in followersName]
+        count = int(kwargs["count"])
         return users[:count]
 
-    def getMyFriendIDs(self, count=None):
+    def getMyFriendIDs(self, **kwargs):
         followings = [user for user in self.getMyFollowings()]
         followersName = [user.screen_name for user in self.getMyFollowers()]
         users = [str(user.id) for user in followings if user.screen_name in followersName]
+        count = int(kwargs["count"])
         return ','.join(users[:count])
 
-    def getMyFriendUserNames(self, count=None):
+    def getMyFriendUserNames(self, **kwargs):
         followings = [user for user in self.getMyFollowings()]
         followersName = [user.screen_name for user in self.getMyFollowers()]
         users = [user.screen_name for user in followings if user.screen_name in followersName]
+        count = int(kwargs["count"])
         return ','.join(users[:count])
 
-    def follow(self, userName):
-        userObj = self.getUser(userName)
+    def follow(self, **kwargs):
+        userObj = self.getUser(**kwargs)
         userObj.follow()
 
-    def unFollow(self, userName):
-        userObj = self.getUser(userName)
+    def unFollow(self, **kwargs):
+        userObj = self.getUser(**kwargs)
         userObj.unfollow()
 
-    def friendShip(self, userName1, userName2):
-        'Return status of userName1 and userName2->[is_userName1_follow_userName2, is_userName2_follow_userName1]'
-        result = self.__account.show_friendship(source_screen_name=userName1, target_screen_name=userName2)
+    def friendShip(self, **kwargs):
+        'Return status of userName1 and userName2->[is_srcUserName_follow_dstUserName, is_dstUserName_follow_srcUserName]'
+        if "srcUserName" in kwargs:
+            srcUserName = kwargs["srcUserName"]
+        else:
+            raise ValueError('Param srcUserName is not exist!')
+        if "dstUserName" in kwargs:
+            dstUserName = kwargs["dstUserName"]
+        else:
+            raise ValueError('Param dstUserName is not exist!')
+        result = self.__account.show_friendship(source_screen_name=srcUserName, target_screen_name=dstUserName)
         return [result[0].following, result[0].followed_by]
 
-    def isFollow(self, userName1, userName2):
-        'Return userName1 is followed userName2 or not.'
-        return self.friendShip(userName1, userName2)[0]
+    def isFollow(self, **kwargs):
+        'Return srcUserName is followed dstUserName or not.'
+        return self.friendShip(**kwargs)[0]
 
-    def isFriend(self, userName1, userName2):
-        'Return both of userName1 and userName2 followed each other or not.'
-        friendShip = self.friendShip(userName1, userName2)[0]
+    def isFriend(self, **kwargs):
+        'Return both of srcUserName and dstUserName followed each other or not.'
+        friendShip = self.friendShip(**kwargs)[0]
         return friendShip[0] and friendShip[1]
 
-    def getHome(self, count=None):
-        if count is None:
-            return tweepy.Cursor(self.__account.home_timeline).items()
-        else:
-            return tweepy.Cursor(self.__account.home_timeline).items(count)
+    def getHome(self, **kwargs):
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+            if count is not None:
+                return tweepy.Cursor(self.__account.home_timeline).items(count)
+        return tweepy.Cursor(self.__account.home_timeline).items()
 
-    def getHomeTweetIDs(self, count=None):
-        tweets = self.getHome() if count is None else self.getHome(count)
-        tweetIDs = []
+    def getHomeTweetIDs(self, **kwargs):
+        tweets = self.getHome(**kwargs)
+        tweetIDs = ''
         for tweet in tweets:
-            tweetIDs.append(str(tweet.id))
-        return ','.join(tweetIDs)
+            tweetIDs += ',' + (str(tweet.id))
+        return tweetIDs[1:]
 
-    def getTimeline(self, userName, count=None):
-        if count is None:
+    def getTimeline(self, **kwargs):
+        if "userName" in kwargs:
+            userName = kwargs["userName"]
+            if "count" in kwargs:
+                count = int(kwargs["count"])
+                if count is not None:
+                    return tweepy.Cursor(self.__account.user_timeline, screen_name=userName).items(count)
             return tweepy.Cursor(self.__account.user_timeline, screen_name=userName).items()
         else:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name=userName).items(count)
+            raise ValueError('Param userName is not exist!')
 
-    def getTimelineTweetIDs(self, userName, count=None):
-        tweets = self.getTimeline(userName) if count is None else self.getTimeline(userName, count)
-        tweetIDs = []
+    def getTimelineTweetIDs(self, **kwargs):
+        tweets = self.getTimeline(**kwargs)
+        tweetIDs = ''
         for tweet in tweets:
-            tweetIDs.append(str(tweet.id))
-        return ','.join(tweetIDs)
+            tweetIDs += ',' + (str(tweet.id))
+        return tweetIDs[1:]
 
-    def getMyTimeline(self, count=None):
+    def getMyTimeline(self, **kwargs):
         myUserName = self.getMyUser().screen_name
-        if count is None:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name=myUserName).items()
-        else:
-            return tweepy.Cursor(self.__account.user_timeline, screen_name=myUserName).items(count)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+            if count is not None:
+                return tweepy.Cursor(self.__account.user_timeline, screen_name=myUserName).items(count)
+        return tweepy.Cursor(self.__account.user_timeline, screen_name=myUserName).items()
 
-    def getMyTimelineTweetIDs(self, count=None):
-        tweets = self.getMyTimeline() if count is None else self.getMyTimeline(count)
-        tweetIDs = []
+    def getMyTimelineTweetIDs(self, **kwargs):
+        tweets = self.getMyTimeline(**kwargs)
+        tweetIDs = ''
         for tweet in tweets:
-            tweetIDs.append(str(tweet.id))
-        return ','.join(tweetIDs)
+            tweetIDs += ',' + (str(tweet.id))
+        return tweetIDs[1:]
 
-    def isMention(self, tweet):
+    def isMention(self, **kwargs):
+        tweet = self.getTweet(**kwargs)
         return tweet.in_reply_to_status_id is not None
 
-    def fave(self, tweetID):
-        self.__account.create_favorite(tweetID)
+    def fave(self, **kwargs):
+        if "tweetID" in kwargs:
+            tweetID = kwargs["tweetID"]
+            self.__account.create_favorite(tweetID)
+        else:
+            raise ValueError('Param tweetID is not exist!')
 
-    def unFave(self, tweetID):
-        self.__account.destroy_favorite(tweetID)
+    def unFave(self, **kwargs):
+        if "tweetID" in kwargs:
+            tweetID = kwargs["tweetID"]
+            self.__account.destroy_favorite(tweetID)
+        else:
+            raise ValueError('Param tweetID is not exist!')
 
-    def retweet(self, tweetID):
-        self.__account.retweet(tweetID)
+    def retweet(self, **kwargs):
+        if "tweetID" in kwargs:
+            tweetID = kwargs["tweetID"]
+            self.__account.retweet(tweetID)
+        else:
+            raise ValueError('Param tweetID is not exist!')
 
-    def getNoBackUser(self, userName, count=None):
-        User = self.getUser(userName)
-        followings = self.getFollowings(userName)
+    def getNoBackUser(self, **kwargs):
+        User = self.getUser(**kwargs)
+        followings = self.getFollowings(**kwargs)
         users = []
         for user in followings:
-            if not self.isFollow(user.screen_name, User.screen_name):
+            if not self.isFollow(srcUserName=user.screen_name, dstUserName=User.screen_name):
                 users.append(user)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return users[:count]
 
-    def getNoBackUserIDs(self, count=None):
-        User = self.getUser(userName)
-        followings = self.getFollowings(userName)
+    def getNoBackUserIDs(self, **kwargs):
+        User = self.getUser(**kwargs)
+        followings = self.getFollowings(**kwargs)
         users = []
         for user in followings:
-            if not self.isFollow(user.screen_name, User.screen_name):
+            if not self.isFollow(srcUserName=user.screen_name, dstUserName=User.screen_name):
                 users.append(str(user.id))
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getNoBackUserUserNames(self, count=None):
-        User = self.getUser(userName)
-        followings = self.getFollowings(userName)
+    def getNoBackUserUserNames(self, **kwargs):
+        User = self.getUser(**kwargs)
+        followings = self.getFollowings(**kwargs)
         users = []
         for user in followings:
-            if not self.isFollow(user.screen_name, User.screen_name):
+            if not self.isFollow(srcUserName=user.screen_name, dstUserName=User.screen_name):
                 users.append(user.screen_name)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getNoBackMe(self, count=None):
+    def getNoBackMe(self, **kwargs):
         'Return list of users that not followed back you.You follow them but they not follow you!'
         followings = self.getMyFollowings()
         Me = self.getMyUser()
         # users = [user for user in followings if not self.isFollow(Me, user)]
         users = []
         for user in followings:
-            if not self.isFollow(user.screen_name, Me.screen_name):
+            if not self.isFollow(srcUserName=user.screen_name, dstUserName=Me.screen_name):
                 users.append(user)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return users[:count]
     
-    def getNoBackMeIDs(self, count=None):
+    def getNoBackMeIDs(self, **kwargs):
         followings = self.getMyFollowings()
         Me = self.getMyUser()
         users = []
         for user in followings:
-            if not self.isFollow(user.screen_name, Me.screen_name):
+            if not self.isFollow(srcUserName=user.screen_name, dstUserName=Me.screen_name):
                 users.append(str(user.id))
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getNoBackMeUserNames(self, count=None):
+    def getNoBackMeUserNames(self, **kwargs):
         followings = self.getMyFollowings()
         Me = self.getMyUser()
         users = []
         for user in followings:
-            if not self.isFollow(user.screen_name, Me.screen_name):
+            if not self.isFollow(srcUserName=user.screen_name, dstUserName=Me.screen_name):
                 users.append(user.screen_name)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getUserNoBack(self, userName, count=None):
-        followers = self.getFollowers(userName)
-        User = self.getUser(userName)
+    def getUserNoBack(self, **kwargs):
+        followers = self.getFollowers(**kwargs)
+        User = self.getUser(**kwargs)
         users = []
         for user in followers:
-            if not self.isFollow(User.screen_name, user.screen_name):
+            if not self.isFollow(srcUserName=User.screen_name, dstUserName=user.screen_name):
                 users.append(user)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return users[:count]
 
-    def getUserNoBackIDs(self, userName, count=None):
-        followers = self.getFollowers(userName)
-        User = self.getUser(userName)
+    def getUserNoBackIDs(self, **kwargs):
+        followers = self.getFollowers(**kwargs)
+        User = self.getUser(**kwargs)
         users = []
         for user in followers:
-            if not self.isFollow(User.screen_name, user.screen_name):
+            if not self.isFollow(srcUserName=User.screen_name, dstUserName=user.screen_name):
                 users.append(str(user.id))
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getUserNoBackUserNames(self, userName, count=None):
-        followers = self.getFollowers(userName)
-        User = self.getUser(userName)
+    def getUserNoBackUserNames(self, **kwargs):
+        followers = self.getFollowers(**kwargs)
+        User = self.getUser(**kwargs)
         users = []
         for user in followers:
-            if not self.isFollow(User.screen_name, user.screen_name):
+            if not self.isFollow(srcUserName=User.screen_name, dstUserName=user.screen_name):
                 users.append(user.screen_name)
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getMeNoBack(self, count=None):
+    def getMeNoBack(self, **kwargs):
         followers = self.getMyFollowers()
         users = [user for user in followers if not user.following]
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return users[:count]
 
-    def getMeNoBackIDs(self, count=None):
+    def getMeNoBackIDs(self, **kwargs):
         followers = self.getMyFollowers()
         users = [str(user.id) for user in followers if not user.following]
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
 
-    def getMeNoBackUserNames(self, count=None):
+    def getMeNoBackUserNames(self, **kwargs):
         followers = self.getMyFollowers()
         users = [user.screen_name for user in followers if not user.following]
+        if "count" in kwargs:
+            count = int(kwargs["count"])
+        else:
+            count = None
         return ','.join(users[:count])
+
+    def getMeFaves(self):
+        pass
+
+    def getUserFaves(self, **kwargs):
+        pass
+
+    def getFavesMe(self):
+        pass
+
+    def getFavesUser(self, **kwargs):
+        pass
+
+    def getMeRetweets(self):
+        pass
+
+    def getUserRetweets(self, **kwargs):
+        pass
+
+    def getRetweetsMe(self):
+        pass
+
+    def getRetweetsUser(self, **kwargs):
+        pass
+
+    def getMeTweetWithMentions(self):
+        pass
+
+    def getUserTweetWihtMentions(self, **kwargs):
+        pass
+
+    def getMeTweetWithNoMentions(self):
+        pass
+
+    def getUserTweetWithNoMentions(self):
+        pass
+
+    def getMeList(self):
+        pass
+
+    def getUserList(self, **kwargs):
+        pass
+
+    def getMeReplies(self):
+        pass
+
+    def getUserReplies(self, **kwargs):
+        pass
+
+    def getLastMeActivity(self):
+        pass
+
+    def getLastUserActivity(self, **kwargs):
+        pass
+
+    def getMePinTweet(self):
+        pass
+
+    def getUserPinTweet(self, **kwargs):
+        pass
+
+    def getTweetFaves(self, **kwargs):
+        pass
+
+    def getTweetRetweets(self, **kwargs):
+        pass
+
+    def getTweetReplies(self, **kwargs):
+        pass
+
+    def getTweetReplires(self, **kwargs):
+        pass
+
+    def getUserMentions(self, **kwargs):
+        pass
+
+    def getMeMentions(self, **kwargs):
+        pass
+
+    def fetchMeState(self):
+        pass
+
+    def fetchUserState(self, **kwargs):
+        pass
+
+    def updateMeDB(self):
+        pass
+
+    def updateUserDB(self, **kwargs):
+        pass
 
 if __name__ == '__main__':
     pass

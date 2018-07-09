@@ -37,6 +37,8 @@ class TwitterCLIShow:
                 'Location':tweetObj.place,
                 'Creation Date':tweetObj.created_at,
                 'Is Quote':tweetObj.is_quote_status,
+                'Is Faved By You':tweetObj.favorited,
+                'Is Reted By You':tweetObj.retweeted,
                 'Language':tweetObj.lang,
                 'Favorites Count':tweetObj.favorite_count,
                 'Retweets Count':tweetObj.retweet_count
@@ -44,7 +46,7 @@ class TwitterCLIShow:
         return Tweet
 
     def userDict(self, userName):
-        userObj = self.__account.getUser(userName)
+        userObj = self.__account.getUser(userName=userName)
         return self.__userObjDict(userObj)
 
     def myUserDict(self):
@@ -52,7 +54,7 @@ class TwitterCLIShow:
         return self.__userObjDict(userObj)
 
     def tweetDict(self, tweetID):
-        tweetObj = self.__account.getTweet(tweetID)
+        tweetObj = self.__account.getTweet(tweetID=tweetID)
         return self.__tweetObjDict(tweetObj)
 
     def handleShowMe(self, line):
@@ -223,7 +225,7 @@ class TwitterCLIShow:
 
     def displayOwnerTimeline(self, count=None):
         "Show owner tweets in timeline"
-        tweets = self.__account.getMyTimeline() if count is None else self.__account.getMyTimeline(count)
+        tweets = self.__account.getMyTimeline(count=count)
         print("\nYour Timeline:")
         print("==============================")
         print("=========================")
@@ -239,7 +241,7 @@ class TwitterCLIShow:
 
     def displayTimeline(self, userName, count=None):
         "Show tweets in timeline"
-        tweets = self.__account.getTimeline(userName) if count is None else self.__account.getTimeline(userName, count)
+        tweets = self.__account.getTimeline(userName=userName, count=count)
         print("\nUser %s Timeline:"%userName)
         print("==============================")
         print("=========================")        
@@ -255,7 +257,7 @@ class TwitterCLIShow:
 
     def displayOwnerFollowers(self, count=None):
         "Show owner followers"
-        followers = self.__account.getMyFollowers() if count is None else self.__account.getMyFollowers(count)
+        followers = self.__account.getMyFollowers(count=count)
         print("\nThey Are Following You:")
         print("==============================")
         print("=========================")
@@ -271,7 +273,7 @@ class TwitterCLIShow:
 
     def displayFollowers(self, userName, count=None):
         "Show followers"
-        followers = self.__account.getFollowers(userName) if count is None else self.__account.getFollowers(userName, count)
+        followers = self.__account.getFollowers(userName=userName, count=count)
         print("\nThey Are Following User %s:"%userName)
         print("==============================")
         print("=========================")
@@ -287,7 +289,7 @@ class TwitterCLIShow:
 
     def displayOwnerFollowings(self, count=None):
         "Show owner followings"
-        followings = self.__account.getMyFollowings() if count is None else self.__account.getMyFollowings(count)
+        followings = self.__account.getMyFollowings(count=count)
         print("\nYou Are Following:")
         print("==============================")
         print("=========================")
@@ -303,7 +305,7 @@ class TwitterCLIShow:
 
     def displayFollowings(self, userName, count=None):
         "Show followings"
-        followings = self.__account.getFollowings(userName) if count is None else self.__account.getFollowings(userName, count)
+        followings = self.__account.getFollowings(userName=userName, count=count)
         print("\nUser %s Are Following:"%userName)
         print("==============================")
         print("=========================")
@@ -319,7 +321,7 @@ class TwitterCLIShow:
 
     def displayOwnerFriends(self, count=None):
         "Show owner users both you and them followed each other"
-        friends = self.__account.getMyFriends() if count is None else self.__account.getMyFriends(count)
+        friends = self.__account.getMyFriends(count=count)
         print("\nYour Friends:")
         print("==============================")
         print("=========================")
@@ -335,7 +337,7 @@ class TwitterCLIShow:
 
     def displayFriends(self, userName, count=None):
         "Show users both hi/she and them followed each other"
-        friends = self.__account.getFriends(userName) if count is None else self.__account.getFriends(userName, count)
+        friends = self.__account.getFriends(userName, count=count)
         print("\nUser %s Friends:"%userName)
         print("==============================")
         print("=========================")
@@ -351,7 +353,7 @@ class TwitterCLIShow:
 
     def displayNoBackOwner(self, count=None):
         "Show owner users not follow back you"
-        users = self.__account.getNoBackMe() if count is None else self.__account.getNoBackMe(count)
+        users = self.__account.getNoBackMe(count=count)
         print("\nThey Did Not Followed Back You:")
         print("==============================")
         print("=========================")
@@ -367,7 +369,7 @@ class TwitterCLIShow:
 
     def displayNoBackUser(self, userName, count=None):
         "Show users not follow back user"
-        users = self.__account.getNoBackUser(userName) if count is None else self.__account.getNoBackUser(userName, count)
+        users = self.__account.getNoBackUser(userName=userName, count=count)
         print("\nThey Did Not Followed Back User %s:"%userName)
         print("==============================")
         print("=========================")
@@ -383,7 +385,7 @@ class TwitterCLIShow:
 
     def displayOwnerNoBack(self, count=None):
         "Show owner users not followed back by you"
-        users = self.__account.getMeNoBack() if count is None else self.__account.getMeNoBack(count)
+        users = self.__account.getMeNoBack(count=count)
         print("\nYou Did Not Followed Back:")
         print("==============================")
         print("=========================")
@@ -399,7 +401,7 @@ class TwitterCLIShow:
 
     def displayUserNoBack(self, userName, count=None):
         "Show users not followed back by user"
-        users = self.__account.getUserNoBack(userName) if count is None else self.__account.getUserNoBack(userName, count)
+        users = self.__account.getUserNoBack(userName=userName, count=count)
         print("\nUser %s Did Not Followed Back:"%userName)
         print("==============================")
         print("=========================")
@@ -415,7 +417,7 @@ class TwitterCLIShow:
 
     def displayOwnerHome(self, count=None):
         "Show owner tweets in home"
-        tweets = self.__account.getHome() if count is None else self.__account.getHome(count)
+        tweets = self.__account.getHome(count=count)
         print("\nYour Home:")
         print("==============================")
         print("=========================")
