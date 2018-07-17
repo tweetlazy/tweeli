@@ -51,3 +51,9 @@
 .log{
     background-color:ghostwhite;
 }
+#myDiv{
+    margin-top: 15px;
+}
+#fcb{
+    color: gray;
+}
