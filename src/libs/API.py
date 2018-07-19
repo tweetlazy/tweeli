@@ -1,5 +1,6 @@
 import uuid, json, tweepy
 from flask import Flask, request, session, send_from_directory,redirect
+from flask_session import Session
 # from .Core import TwitterCore
 
 app = Flask(__name__)
@@ -80,7 +81,10 @@ def runServer():
     # import logging
     # log = logging.getLogger('werkzeug')
     # log.disabled = True
+    # Session(app)
     app.secret_key = 'lvkjlfLJLJEIOFs;ffiojsfjelsk'
+    app.config['SESSION_TYPE']='filesystem'
+    Session(app)
     app.run(host='0.0.0.0',debug=True)
 
 if __name__ == "__main__":
