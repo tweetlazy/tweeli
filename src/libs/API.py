@@ -1,5 +1,6 @@
 import uuid, json, tweepy
 from flask import Flask, request, session, send_from_directory,redirect
+from flask_session import Session
 # from .Core import TwitterCore
 
 app = Flask(__name__)
@@ -32,6 +33,44 @@ def send_js(path):
         return redirect("/html/index.html",code=302)
     return send_from_directory('html', path)
 
+@app.route("/data/chart", methods=['GET'])
+def chart_data():
+    if not isLoggedIn():
+        return redirect("/html/login.html",code=302)
+    return """var followers = {
+              x: [1, 2, 3, 4, 5, 6, 7],
+              y: [4, 5, 3, 1, -1, 2, 1],
+              type: 'scatter',
+              name: 'Followers'
+            };
+            var following = {
+              x: [1, 2, 3, 4, 5, 6, 7],
+              y: [2, 5, 3, 2, 1, -2, 3],
+              type: 'scatter',
+              name: 'Following'
+            };
+            var tweets = {
+              x: [1, 2, 3, 4, 5, 6, 7],
+              y: [16, 5, 11, 9, 14, 7, 2],
+              type: 'scatter',
+              name: 'Tweets'
+            };
+            var data = [followers, following, tweets];
+            var layout = {
+              title: 'Changes during last week',
+              xaxis: {
+                title: 'Days of the Week',
+                showgrid: false,
+                zeroline: false
+              },
+              yaxis: {
+                title: 'Numbers',
+                showline: false
+              }
+            };
+            Plotly.newPlot('myDiv', data, layout);
+    """
+    
 @app.route("/", methods=['GET', 'POST'])
 def index():
 
@@ -80,7 +119,10 @@ def runServer():
     # import logging
     # log = logging.getLogger('werkzeug')
     # log.disabled = True
+    # Session(app)
     app.secret_key = 'lvkjlfLJLJEIOFs;ffiojsfjelsk'
+    app.config['SESSION_TYPE']='filesystem'
+    Session(app)
     app.run(host='0.0.0.0',debug=True)
 
 if __name__ == "__main__":
