@@ -5,7 +5,7 @@ A command line interface for Twitter with some cool features
 ## QuickStart
 
 * First, enable Twitter apps for your account with the following link [Twitter Account Manager](https://apps.twitter.com).
-* Then, write all neccessary information into config file which is located in `src/config/twitter-account-manager.ini`
+* Then, write all neccessary information into config file which is located in `src/config/config.cfg`
 * Install the required packages in requirements.txt:
 
 ```sh
