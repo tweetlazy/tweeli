@@ -7,7 +7,7 @@ from os import path
 import flask
 import tweepy
 
-CONFIG_PATH = 'config/config.cfg'
+CONFIG_PATH = 'config/config.ini'
 
 class TwitterCore:
 
