@@ -11,7 +11,7 @@ A command line interface for Twitter with some cool features
 ```sh
 $ pip3 install -r requirements.txt
 ```
-* Run `main` program and press 'tab' to show all available commands. Then run your ideal command and enjoy it!
+* Run `main.py` program and press 'tab' to show all available commands. Then run your ideal command and enjoy it!
 
 ## Contribution
 
