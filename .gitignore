@@ -1,7 +1,7 @@
 .vscode/
 .venv/
 myconfig.txt
-src/config/twitter_account_manager.ini
+src/config/config.cfg
 *.pyc
 *.swp
 src/libs/__pycache__/
