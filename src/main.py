@@ -1,11 +1,12 @@
 
 # import readline
 import sys
-from os import path
 from multiprocessing import Process
+from os import path
 
-from libs.CLI import TwitterCLI
-from libs.API import runServer
+from libs.api import runServer
+from libs.cli import TwitterCLI
+
 
 def runAPIServer():
     runServer()
