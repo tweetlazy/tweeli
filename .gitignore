@@ -1,6 +1,5 @@
 .vscode/
 .venv/
-myconfig.txt
 src/config/config.ini
 *.pyc
 *.swp

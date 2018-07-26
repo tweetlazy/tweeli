@@ -1,6 +1,6 @@
-# Twitter-API-Account-Manager-Python3
+# tweeli = twitter + cli
 
-A command line interface for Twitter with some cool features
+A command line interface for Twitter with some cool features writing with python 3
 
 ## QuickStart
 
@@ -21,6 +21,6 @@ Please fork it and raise a pull request for your contribution.
 
 ## To-Do:
 
-1. Complete twitter functions (list, direct, trends and ...)
+1. Complete twitter core functions (list, direct, trends and ...)
 2. Implement file system caching (handle twitter api limites and )
-3. Add unfollow track
+3. Add unfollow track (DB is required!)
