@@ -2,8 +2,9 @@
 from cmd import Cmd
 from sys import exit
 
-from .Core import TwitterCore
-from .CLI_Show import TwitterCLIShow
+from .cli_show import TwitterCLIShow
+from .core import TwitterCore
+
 
 class TwitterCLI(Cmd):
 

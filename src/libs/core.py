@@ -1,9 +1,13 @@
 
-import tweepy, flask, json
+import json
 from configparser import ConfigParser
 from os import path
 
-CONFIG_PATH = 'config/twitter_account_manager.ini'
+# third-party imports
+import flask
+import tweepy
+
+CONFIG_PATH = 'config/config.ini'
 
 class TwitterCore:
 

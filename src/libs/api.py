@@ -1,7 +1,12 @@
-import uuid, json, tweepy
-from flask import Flask, request, session, send_from_directory,redirect
+import json
+import uuid
+
+# third-party imports
+import tweepy
+from flask import Flask, redirect, request, send_from_directory, session
 from flask_session import Session
-# from .Core import TwitterCore
+
+# from .core import TwitterCore
 
 app = Flask(__name__)
 

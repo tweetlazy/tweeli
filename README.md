@@ -1,30 +1,17 @@
 # Twitter-API-Account-Manager-Python3
-## Python 3 script for managing your twitter account using twitter official api's
 
-### Requirements
+A command line interface for Twitter with some cool features
 
-1. Create an Application with your Twitter account in [Twitter Account Manager](https://apps.twitter.com) to get API Access.
-2. Duplicate "twitter_account_manager.ini_example" in config file and rename new file to "twitter_account_manager.ini"
-3. Enter API keys in twitter_account_manager.ini file in config folder:
+## QuickStart
 
-```sh
-
-CONSUMERKEY = YOUR_CONSUMER_KEY
-
-CONSUMERSECRET = YOUR_CONSUMER_SECRET
-
-ACCESSKEY = YOUR_ACCESS_KEY
-
-ACCESSSECRET = YOUR_ACCESS_SECRET
-```
-
-4. Install the required packages in requirements.txt:
+* First, enable Twitter apps for your account with the following link [Twitter Account Manager](https://apps.twitter.com).
+* Then, write all neccessary information into config file which is located in `src/config/config.ini`
+* Install the required packages in requirements.txt:
 
 ```sh
-$pip3 install tweepy
-$pip3 install configparser
+$ pip3 install -r requirements.txt
 ```
-5. Run main and press 'tab' to show available commands. Then run your ideal command and enjoy it!
+* Run `main.py` program and press 'tab' to show all available commands. Then run your ideal command and enjoy it!
 
 ## Contribution
 
@@ -32,7 +19,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/smmtah
 
 Please fork it and raise a pull request for your contribution.
 
-## Next Steps:
+## To-Do:
 
 1. Complete twitter functions (list, direct, trends and ...)
 2. Implement file system caching (handle twitter api limites and )
