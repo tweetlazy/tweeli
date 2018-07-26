@@ -15,7 +15,7 @@ $ pip3 install -r requirements.txt
 
 ## Contribution
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/smmtaheri/Twitter-API-Account-Manager-Python .
+Bug reports and pull requests are welcome on GitHub at https://github.com/smmtaheri/tweeli .
 
 Please fork it and raise a pull request for your contribution.
 
