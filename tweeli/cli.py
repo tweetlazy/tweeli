@@ -13,9 +13,9 @@ class TwitterCLI(Cmd):
     SHOW_LEVEL_TWO = ['timeline', 'follower', 'following', 'friend', 'home']
     SHOW_LEVEL_SHARE = ['noback']
 
-    def start(self):
+    def start(self, **kwargs):
         self.__twitterCore = TwitterCore()
-        self.__twitterCore.login()
+        self.__twitterCore.login(**kwargs)
         self.__CLIShow = TwitterCLIShow(self.__twitterCore)
         self.prompt =  'Twitter>>> '
         self.__output = None

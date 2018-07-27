@@ -1,7 +1,11 @@
 .vscode/
 .venv/
-src/config/config.ini
+tweeli/config/config.ini
 *.pyc
 *.swp
-src/libs/__pycache__/
-src/libs/.CLI_history
+tweeli/__pycache__/
+tweeli/.CLI_history
+build/
+dist/
+sdist/
+tweeli.egg-info

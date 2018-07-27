@@ -4,10 +4,9 @@ from configparser import ConfigParser
 from os import path
 
 # third-party imports
-import flask
 import tweepy
 
-CONFIG_PATH = 'config/config.ini'
+DEFAULT_CONFIG_PATH = 'config/config.ini'
 
 class TwitterCore:
 
@@ -19,7 +18,12 @@ class TwitterCore:
 
         if kwargs == {}:
             # Get params from config file
-            parser = self.__initConfig()
+            parser = self.__initConfig(DEFAULT_CONFIG_PATH)
+            consumerKey, consumerSecret, accessKey, accessSecret, proxy = self.__getConfig(parser)
+        elif "configPath" in kwargs:
+            # Get params from config file
+            configPath = kwargs["configPath"]
+            parser = self.__initConfig(configPath)
             consumerKey, consumerSecret, accessKey, accessSecret, proxy = self.__getConfig(parser)
         else:
             if "consumerKey" in kwargs:
@@ -51,17 +55,17 @@ class TwitterCore:
             self.__account = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, proxy=proxy)
         return True
 
-    def __initConfig(self):
+    def __initConfig(self, configPath):
         'Return parser of config file'
 
         # Check config file is exist or not
-        if not path.exists(CONFIG_PATH):
+        if not path.exists(configPath):
             print('[X] Config file is not exist or is invalid.')
             exit(1)
 
         # Read config file
         parser = ConfigParser()
-        parser.read(CONFIG_PATH)
+        parser.read(configPath)
         return parser
 
     def __getConfig(self, parser):
